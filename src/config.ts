@@ -1,4 +1,5 @@
 export const DESCRIPTION = "Risun's blog";
+export const SOURCE_LINK = "https://github.com/Risuntsy/blog";
 
 export const ITEMS_PER_PAGE = 5;
 
