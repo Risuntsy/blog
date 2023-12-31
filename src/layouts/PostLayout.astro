@@ -12,5 +12,7 @@ const { post } = Astro.props;
 ---
 
 <RootLayout title={post.data.title}>
-    <Post post={post} />
+    <div class="grid justify-center">
+        <Post post={post} />
+    </div>
 </RootLayout>
