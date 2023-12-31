@@ -17,9 +17,11 @@ const posts = page.data;
 ---
 
 <RootLayout title={metaTitle}>
-    <div class="grid grid-cols-1 p-2 justify-center">
-        <h2>{title}</h2>
-        <PostPreviewList posts={posts} />
-        <Pagination page={page} />
+    <div class="grid p-2 justify-center">
+        <div class="w-[90vw] max-w-4xl">
+            <h2>{title}</h2>
+            <PostPreviewList posts={posts} />
+            <Pagination page={page} />
+        </div>
     </div>
 </RootLayout>
