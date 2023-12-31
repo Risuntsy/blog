@@ -17,7 +17,31 @@ const postsByCategory = categorys.map((category) => {
     <div class="grid justify-center">
         <div class="w-[85vw] max-w-2xl">
             <h1 class="text-4xl my-4">Category:</h1>
-            <div class="flex flex-wrap space-x-2"></div>
+            <div class="flex flex-wrap space-x-2">
+                {
+                    postsByCategory.map(({ category, posts }) => (
+                        <div>
+                            <a
+                                href={`/category/${category}/1`}
+                            >{`${category}: `}</a>
+                            <ul>
+                                {posts.map((post) => (
+                                    <li class="flex space-x-2">
+                                        <span>
+                                            {post.data.created_at
+                                                .toISOString()
+                                                .substring(0, 10)}
+                                        </span>
+                                        <a href={`/post/${post.slug}`}>
+                                            {post.data.title}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))
+                }
+            </div>
         </div>
     </div>
 </RootLayout>
