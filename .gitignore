@@ -22,4 +22,4 @@ pnpm-debug.log*
 
 
 # test file
-src/content/post/*
+src/content/post/test/*
