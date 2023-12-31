@@ -1,0 +1,48 @@
+html,
+body {
+    @apply w-full h-full m-0 p-0;
+}
+
+* {
+    @apply text-pixel-primary text-base;
+}
+
+h1 {
+    @apply text-5xl;
+}
+
+h2 {
+    @apply text-4xl;
+}
+
+h3 {
+    @apply text-3xl;
+}
+
+h4 {
+    @apply text-2xl;
+}
+
+h5 {
+    @apply text-xl;
+}
+
+h6 {
+    @apply text-lg;
+}
+
+a {
+    @apply border-b-2 border-pixel-light hover:bg-pixel-light;
+}
+
+p {
+    @apply break-words;
+}
+
+.shadow-pixel {
+    @apply border-pixel-primary border-2 border-solid;
+}
+
+pre {
+    @apply px-4 !bg-pixel-code rounded;
+}

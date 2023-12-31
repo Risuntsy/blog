@@ -1,0 +1,25 @@
+---
+import { type Page } from "astro";
+
+import Pagination from "@/components/common/Pagination.astro";
+import PostPreviewList from "@/components/post/PostPreviewList.astro";
+import RootLayout from "./RootLayout.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+    metaTitle: string;
+    title: string;
+    page: Page<CollectionEntry<"post">>;
+}
+
+const { metaTitle, title, page } = Astro.props;
+const posts = page.data;
+---
+
+<RootLayout title={metaTitle}>
+    <div class="grid grid-cols-1 p-2 justify-center">
+        <h2>{title}</h2>
+        <PostPreviewList posts={posts} />
+        <Pagination page={page} />
+    </div>
+</RootLayout>

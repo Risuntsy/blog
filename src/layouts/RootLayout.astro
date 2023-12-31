@@ -1,0 +1,24 @@
+---
+import BaseBody from "@/components/html/BaseBody.astro";
+import BaseHead from "@/components/html/BaseHead.astro";
+import Header from "@/components/common/Header.astro";
+import Footer from "@/components/common/Footer.astro";
+import { DESCRIPTION } from "@/config";
+
+interface Props {
+    title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<html class="bg-pixel-background">
+    <BaseHead title={title} description={DESCRIPTION} />
+    <BaseBody>
+        <Header />
+        <div class="grid my-10">
+            <slot />
+        </div>
+        <Footer />
+    </BaseBody>
+</html>
