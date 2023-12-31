@@ -4,7 +4,7 @@
 
 使用 [Astro](https://astro.build/) 框架和 [TailwindCSS](https://tailwindcss.com/) 搭建的简单个人博客
 
-应该是纯静态SSG XD
+应该是纯静态SSG, 目前部署在Vercel
 
 部分样式来源:   
 https://without.boats/blog/  
