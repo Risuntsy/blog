@@ -3,7 +3,7 @@ title: Hello World
 category: 碎碎念
 tags: [前端, 年度总结, 博客]
 created_at: 2023-12-29
-updated_at: 1970-01-01
+updated_at: 2023-12-31
 ---
 
 # Hello world
