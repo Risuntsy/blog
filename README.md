@@ -14,6 +14,7 @@ Wordpress theme [Pixl](https://wordpress.com/theme/pixl) 源码:[pixl](https://g
 
 ## TODO
 
+- [ ] archiver page / time line
 - [ ] code block style
 - [ ] font style
 - [ ] code copy  
