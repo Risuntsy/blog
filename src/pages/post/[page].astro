@@ -11,7 +11,8 @@ interface Props {
 
 export async function getStaticPaths({ paginate }: { paginate: any }) {
     const posts = (await getCollection("post")).sort(
-        (a, b) => a.data.created_at.getDate() - b.data.created_at.getDate()
+        (a, b) =>
+            -1 * (a.data.created_at.getDate() - b.data.created_at.getDate())
     );
 
     return paginate(posts, {
