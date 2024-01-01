@@ -3,12 +3,19 @@ import { type CollectionEntry } from "astro:content";
 import { POST_PREVIEW_LENGTH } from "./config";
 
 export function md2txt(md: string) {
-  return markdownToTxt(md);
+    return markdownToTxt(md);
 }
 
 export function definePostPreview(post: CollectionEntry<"post">) {
-  Object.defineProperty(post.data, "preview", {
-    value: md2txt(post.body).substring(0, POST_PREVIEW_LENGTH),
-  });
-  return post;
+    Object.defineProperty(post.data, "preview", {
+        value: md2txt(post.body).substring(0, POST_PREVIEW_LENGTH),
+    });
+    return post;
+}
+
+export function postDateCompareReverse(
+    a: CollectionEntry<"post">,
+    b: CollectionEntry<"post">
+) {
+    return -1 * (a.data.created_at.getDate() - b.data.created_at.getDate());
 }

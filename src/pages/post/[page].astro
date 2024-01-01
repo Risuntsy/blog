@@ -4,16 +4,14 @@ import { getCollection, type CollectionEntry } from "astro:content";
 import { ITEMS_PER_PAGE } from "@/config";
 
 import PostPaginationLayout from "@/layouts/PostPaginationLayout.astro";
+import { postDateCompareReverse } from "@/utils";
 
 interface Props {
     page: Page;
 }
 
 export async function getStaticPaths({ paginate }: { paginate: any }) {
-    const posts = (await getCollection("post")).sort(
-        (a, b) =>
-            -1 * (a.data.created_at.getDate() - b.data.created_at.getDate())
-    );
+    const posts = (await getCollection("post")).sort(postDateCompareReverse);
 
     return paginate(posts, {
         pageSize: ITEMS_PER_PAGE,

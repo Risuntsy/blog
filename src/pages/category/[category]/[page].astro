@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import { type Page } from "astro";
 import { ITEMS_PER_PAGE } from "@/config";
 import PostPaginationLayout from "@/layouts/PostPaginationLayout.astro";
+import { postDateCompareReverse } from "@/utils";
 
 interface Props {
     page: Page;
@@ -13,9 +14,9 @@ export async function getStaticPaths({ paginate }: { paginate: any }) {
 
     const categorys = [...new Set(allPosts.map((post) => post.data.category))];
     return categorys.flatMap((category) => {
-        const filteredPosts = allPosts.filter(
-            (post) => post.data.category === category
-        );
+        const filteredPosts = allPosts
+            .filter((post) => post.data.category === category)
+            .sort(postDateCompareReverse);
 
         return paginate(filteredPosts, {
             pageSize: ITEMS_PER_PAGE,
