@@ -17,5 +17,5 @@ export function postDateCompareReverse(
     a: CollectionEntry<"post">,
     b: CollectionEntry<"post">
 ) {
-    return -1 * (a.data.created_at.getDate() - b.data.created_at.getDate());
+    return b.data.created_at.getDate() - a.data.created_at.getDate();
 }
