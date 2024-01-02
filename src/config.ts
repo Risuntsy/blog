@@ -13,7 +13,7 @@ export const NAVIGATION = {
         { href: "/post/1", title: "Posts" },
         { href: "/category", title: "Categorys" },
         { href: "/tag", title: "Tags" },
-        // { href: "/archiver", title: "Archiver" },
+        { href: "/archiver", title: "Archiver" },
     ],
     // persional info
     right: [
