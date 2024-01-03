@@ -10,9 +10,11 @@ const content = md2txt(post.body);
 const previewContent = content.substring(0, POST_PREVIEW_LENGTH);
 ---
 
-<div class="shadow-pixel p-6 grid grid-cols-1 w-[85vw] max-w-2xl">
+<div
+    class="shadow-pixel dark:shadow-pixel-dark p-6 grid grid-cols-1 w-[85vw] max-w-2xl"
+>
     <h3>{title}</h3>
-    <p class="text-pixel-light text-sm">
+    <p class="text-pixel-light dark:text-pixel-dark-light text-sm">
         {`Post at ${created_at.toISOString().substring(0, 10)} about `}
         <a href={`/category/${category}/1`}>{category}</a>
     </p>
