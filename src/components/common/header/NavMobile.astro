@@ -12,7 +12,7 @@ const links = NAVIGATION.left;
 </button>
 <div
     id="mobile-menu-container"
-    class="-translate-x-full transform duration-300 fixed left-0 top-0 h-full w-full z-10 bg-pixel-menu-bg px-4 py-2"
+    class="-translate-x-full transform duration-300 fixed left-0 top-0 h-full w-full z-10 bg-pixel-menu-bg dark:bg-pixel-dark-menu-bg px-4 py-2"
 >
     <div class="flex px-2.5 py-3">
         <button class="sm:hidden mobile-menu">
@@ -51,4 +51,7 @@ const links = NAVIGATION.left;
     }
 
     addEventListener();
+    document.addEventListener("astro:after-swap", () => {
+        addEventListener();
+    });
 </script>

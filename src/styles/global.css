@@ -4,7 +4,7 @@ body {
 }
 
 * {
-    @apply text-pixel-primary text-base;
+    @apply text-pixel-primary dark:text-pixel-dark-primary text-base;
 }
 
 h1 {
@@ -32,7 +32,7 @@ h6 {
 }
 
 a {
-    @apply border-b-2 border-pixel-light hover:bg-pixel-light;
+    @apply border-b-2 border-pixel-light dark:border-pixel-dark-light hover:bg-pixel-light;
 }
 
 p {
@@ -40,9 +40,9 @@ p {
 }
 
 .shadow-pixel {
-    @apply border-pixel-primary border-2 border-solid;
+    @apply border-pixel-primary dark:border-pixel-dark-primary border-2 border-solid;
 }
 
 pre {
-    @apply px-4 !bg-pixel-code rounded;
+    @apply px-4 !bg-pixel-code-bg rounded;
 }
