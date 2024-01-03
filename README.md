@@ -14,11 +14,11 @@ Wordpress theme [Pixl](https://wordpress.com/theme/pixl) 源码:[pixl](https://g
 
 ## TODO
 
+- [x] dark theme 
 - [ ] archiver page / time line (mobile)
 - [ ] code block style
 - [ ] font style
 - [ ] code copy  
-- [ ] dark theme  
 - [ ] i18n  
 
 ## Commands
