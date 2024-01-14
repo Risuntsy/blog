@@ -1,5 +1,6 @@
 ---
 import HeaderLink from "./HeaderLink.astro";
+import { getLangAndPageFromUrl, useTranslations } from "@/i18n/utils";
 
 interface Props {
     links: {
@@ -9,12 +10,16 @@ interface Props {
 }
 
 const { links } = Astro.props;
+
+const {lang} = getLangAndPageFromUrl(Astro.url);
+const t = useTranslations(lang, "header-links");
+
 ---
 
 {
     links.map((link) => (
-        <HeaderLink class="hidden sm:block" href={link.href}>
-            {link.title}
+        <HeaderLink class="hidden sm:block" href={`/${lang}${link.href}`}>
+            {t(link.title)}
         </HeaderLink>
     ))
 }

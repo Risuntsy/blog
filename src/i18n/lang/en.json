@@ -1,0 +1,17 @@
+{
+    "header-links": {
+        "home": "Home",
+        "posts": "Posts",
+        "categories": "Categories",
+        "tags": "Tags",
+        "archiver": "Archiver",
+        "rss": "Feed",
+        "about": "About"
+    },
+    "index": {
+        "home": "Home"
+    },
+    "about": {
+        "about": "About"
+    }
+}
