@@ -16,7 +16,7 @@ export default {
                     background: "#2d2e34",
                     primary: "#b392d4",
                     light: "#8379ad",
-                    "code-bg": "",
+                    "code-bg": "#141717",
                     "menu-bg": "rgba(66, 66, 66, 0.9)",
                 },
             },
