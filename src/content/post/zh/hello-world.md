@@ -4,6 +4,7 @@ category: 杂谈
 tags: [前端, 年终总结, 博客]
 created_at: 2023-12-29
 updated_at: 2023-12-31
+language: zh-cn
 ---
 
 # Hello world

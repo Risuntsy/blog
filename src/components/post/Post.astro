@@ -1,27 +1,31 @@
 ---
 import type { CollectionEntry } from "astro:content";
 
+import {getLangFromUrl, useTranslations } from "@/i18n/utils";
+
 interface Props {
     post: CollectionEntry<"post">;
 }
 
 const { post } = Astro.props;
+const { lang } = getLangFromUrl(Astro.url);
 const { category, tags, created_at } = post.data;
 const { Content } = await post.render();
+const t = useTranslations(lang, "post");
 ---
 
 <div class="w-[85vw] max-w-4xl p-2 grid grid-cols-1 gap-y-4">
     <p class="text-pixel-light dark:text-pixel-dark-light text-sm">
-        {`Post at ${created_at.toISOString().substring(0, 10)} about `}
-        <a href={`/category/${category}/1`}>{category}</a>
+        {`${t("posted-at")} ${created_at.toISOString().substring(0, 10)} ${t("about")} `}
+        <a href={`/${lang}/category/${category}/1`} class="text-sm">{category}</a>
     </p>
     <Content />
     <p class="flex space-x-3">
-        <span>Tags:</span>
+        <span>{`${t("tags")}:`}</span>
         {
             tags.map((tag, i) => (
                 <span class="text-base">
-                    <a href={`/tag/${tag}/1`}>{`#${tag}`}</a>
+                    <a href={`/${lang}/tag/${tag}/1`}>{`#${tag}`}</a>
                     {i < tags.length - 1 ? <span>, </span> : null}
                 </span>
             ))

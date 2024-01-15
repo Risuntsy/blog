@@ -1,11 +1,15 @@
 ---
 import { type CollectionEntry } from "astro:content";
-import { md2txt } from "@/utils";
+import { md2txt, removePostSlugLang } from "@/utils";
 import { POST_PREVIEW_LENGTH } from "@/config";
+import {getLangFromUrl, useTranslations } from "@/i18n/utils";
+
 type Props = CollectionEntry<"post">;
 
 const post = Astro.props;
 const { title, category, tags, created_at } = post.data;
+const { lang } = getLangFromUrl(Astro.url);
+const t = useTranslations(lang, "post");
 const content = md2txt(post.body);
 const previewContent = content.substring(0, POST_PREVIEW_LENGTH);
 ---
@@ -15,8 +19,8 @@ const previewContent = content.substring(0, POST_PREVIEW_LENGTH);
 >
     <h3>{title}</h3>
     <p class="text-pixel-light dark:text-pixel-dark-light text-sm">
-        {`Post at ${created_at.toISOString().substring(0, 10)} about `}
-        <a href={`/category/${category}/1`}>{category}</a>
+        {`${t("posted-at")} ${created_at.toISOString().substring(0, 10)} ${t("about")} `}
+        <a href={`/${lang}/category/${category}/1`} class="text-sm">{category}</a>
     </p>
     <p class="text-base">
         {
@@ -25,12 +29,12 @@ const previewContent = content.substring(0, POST_PREVIEW_LENGTH);
             }`
         }
     </p>
-    <p><a href={`/post/${post.slug}`} class="text-base">Read more</a></p>
+    <p><a href={`/${lang}/post/${removePostSlugLang(post.slug)}`} class="text-base">{t("read-more")}</a></p>
     <p class="flex space-x-3">
         {
             tags.map((tag, i) => (
                 <span class="text-base">
-                    <a href={`/tag/${tag}/1`}>{`#${tag}`}</a>
+                    <a href={`/${lang}/tag/${tag}/1`}>{`#${tag}`}</a>
                     {i < tags.length - 1 ? <span>, </span> : null}
                 </span>
             ))

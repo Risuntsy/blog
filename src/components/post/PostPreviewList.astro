@@ -2,11 +2,13 @@
 import PostPreview from "./PostPreview.astro";
 import { type CollectionEntry } from "astro:content";
 
+
 interface Props {
   posts: CollectionEntry<"post">[];
 }
 
 const { posts } = Astro.props;
+
 ---
 
 <div class="my-10">

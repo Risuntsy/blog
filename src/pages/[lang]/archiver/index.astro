@@ -1,8 +1,9 @@
 ---
 import { getCollection } from "astro:content";
 import ConstrainedWidthLayout from "@/layouts/ConstrainedWidthLayout.astro";
-
-import { postDateCompareReverse, isoDate } from "@/utils";
+import { postDateCompareReverse, isoDate, removePostSlugLang } from "@/utils";
+import { langs } from "@/i18n/ui";
+import {getLangFromUrl, useTranslations } from "@/i18n/utils";
 
 const allPosts = await getCollection("post");
 const years = [
@@ -15,11 +16,23 @@ const postByYear = years.map((year) => ({
         .filter((post) => post.data.created_at.getFullYear() === year)
         .sort(postDateCompareReverse),
 }));
+
+export async function getStaticPaths() {
+    return langs.map((lang) => ({
+        params: {
+            lang,
+        },
+    }));
+}
+
+const { lang } = getLangFromUrl(Astro.url);
+
+const t = useTranslations(lang, "archiver");
 ---
 
-<ConstrainedWidthLayout title="Archiver">
+<ConstrainedWidthLayout title="Archiver" lang={lang}>
     <div class="my-5">
-        <h1 class="mb-10">Archiver</h1>
+        <h1 class="mb-10">{`${t("title")}`}</h1>
         <div class="">
             {
                 postByYear.map(({ year, posts }, i) => (
@@ -30,7 +43,7 @@ const postByYear = years.map((year) => ({
                                 <ul class="grid justify-end gap-0.5">
                                     {posts.map((post) => (
                                         <li class="flex flex-wrap space-x-4 justify-end">
-                                            <a href={`/post/${post.slug}`}>
+                                            <a href={`/${lang}/post/${removePostSlugLang(post.slug)}`}>
                                                 {post.data.title}
                                             </a>
                                             <span class="my-auto">
@@ -51,7 +64,7 @@ const postByYear = years.map((year) => ({
                                             <span class="my-auto">
                                                 {isoDate(post.data.created_at)}
                                             </span>
-                                            <a href={`/post/${post.slug}`}>
+                                            <a href={`/${lang}/post/${removePostSlugLang(post.slug)}`}>
                                                 {post.data.title}
                                             </a>
                                         </li>

@@ -1,6 +1,9 @@
 ---
 import { getCollection } from "astro:content";
 import ConstrainedWidthLayout from "@/layouts/ConstrainedWidthLayout.astro";
+import { langs } from "@/i18n/ui";
+import {getLangFromUrl, useTranslations } from "@/i18n/utils";
+
 
 const allPosts = await getCollection("post");
 const tags = [...new Set(allPosts.map((post) => post.data.tags).flat())];
@@ -11,15 +14,28 @@ const tagsCount = tags.map((tag) => ({
 }));
 
 const maxCount = Math.max(...tagsCount.map((tag) => tag.count));
+
+export async function getStaticPaths() {
+    return langs.map((lang) => ({
+        params: {
+            lang,
+        },
+    }));
+}
+
+const { lang } = getLangFromUrl(Astro.url);
+
+const t = useTranslations(lang, "tag");
+
 ---
 
-<ConstrainedWidthLayout title="Tags">
-    <h1 class="text-4xl my-4">Tags:</h1>
+<ConstrainedWidthLayout title="Tags" lang={lang}>
+    <h1 class="text-4xl my-4">{`${t("title")}:`}</h1>
     <div class="flex flex-wrap space-x-2">
         {
             // todo: font size by count
             tagsCount.map(({ tag, count }) => (
-                <a href={`/tag/${tag}/1`}>{tag}</a>
+                <a href={`/${lang}/tag/${tag}/1`}>{tag}</a>
             ))
         }
     </div>

@@ -1,7 +1,9 @@
 ---
 import { getCollection } from "astro:content";
 import ConstrainedWidthLayout from "@/layouts/ConstrainedWidthLayout.astro";
-import { postDateCompareReverse } from "@/utils";
+import { postDateCompareReverse, removePostSlugLang } from "@/utils";
+import { langs } from "@/i18n/ui";
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
 
 const allPosts = await getCollection("post");
 const categorys = [...new Set(allPosts.map((post) => post.data.category))];
@@ -14,15 +16,29 @@ const postsByCategory = categorys.map((category) => {
             .sort(postDateCompareReverse),
     };
 });
+
+export async function getStaticPaths() {
+    return langs.map((lang) => ({
+        params: {
+            lang,
+        },
+    }));
+}
+
+const { lang } = getLangFromUrl(Astro.url);
+
+const t = useTranslations(lang, "category");
 ---
 
-<ConstrainedWidthLayout title="Categorys">
-    <h1 class="text-4xl my-4">Category:</h1>
+<ConstrainedWidthLayout title="Categorys" lang={lang}>
+    <h1 class="text-4xl my-4">{`${t("title")}:`}</h1>
     <div class="flex flex-wrap space-x-2">
         {
             postsByCategory.map(({ category, posts }) => (
                 <div>
-                    <a href={`/category/${category}/1`}>{`${category}: `}</a>
+                    <a
+                        href={`/${lang}/category/${category}/1`}
+                    >{`${category}: `}</a>
                     <ul>
                         {posts.map((post) => (
                             <li class="flex space-x-2">
@@ -31,7 +47,7 @@ const postsByCategory = categorys.map((category) => {
                                         .toISOString()
                                         .substring(0, 10)}
                                 </span>
-                                <a href={`/post/${post.slug}`}>
+                                <a href={`/${lang}/post/${removePostSlugLang(post.slug)}`}>
                                     {post.data.title}
                                 </a>
                             </li>

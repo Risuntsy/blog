@@ -1,0 +1,29 @@
+---
+import { getCollection } from "astro:content";
+import PostLayout from "@/layouts/PostLayout.astro";
+import { langs } from "@/i18n/ui";
+import { removePostSlugLang } from "@/utils";
+
+export async function getStaticPaths() {
+    const posts = await getCollection("post");
+
+    return langs.flatMap((lang) =>
+        posts.map((post) => {
+            return {
+                params: {
+                    lang,
+                    slug: removePostSlugLang(post.slug),
+                },
+                props: {
+                    post,
+                },
+            };
+        })
+    );
+}
+
+const { lang } = Astro.params;
+const { post } = Astro.props;
+---
+
+<PostLayout post={post} lang={lang} />

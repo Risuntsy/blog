@@ -1,6 +1,8 @@
 ---
 import { type Page } from "astro";
 
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+
 interface Props {
   page: Page;
 }
@@ -10,6 +12,9 @@ const {
   lastPage,
   url: { prev, next },
 } = Astro.props.page;
+
+const {lang} = getLangFromUrl(Astro.url);
+const t = useTranslations(lang, "common");
 ---
 
 <div>
@@ -18,11 +23,11 @@ const {
       {
         prev ? (
           <a href={prev} rel="prev">
-            Previous
+            {t("prev-page")}
           </a>
         ) : (
           <button class="cursor-auto disabled:opacity-50" disabled>
-            Previous
+            {t("prev-page")}
           </button>
         )
       }
@@ -38,11 +43,11 @@ const {
       {
         next ? (
           <a href={next} rel="next">
-            Next
+            {t("next-page")}
           </a>
         ) : (
           <button class="cursor-auto disabled:opacity-50 " disabled>
-            Next
+            {t("next-page")}
           </button>
         )
       }

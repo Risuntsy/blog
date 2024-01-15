@@ -1,0 +1,15 @@
+---
+import { getLangFromUrl } from "@/i18n/utils";
+import { langs } from "@/i18n/ui";
+
+export async function getStaticPaths() {
+    return langs.map((lang) => ({
+        params: {
+            lang,
+        },
+    }));
+}
+
+const {lang} = getLangFromUrl(Astro.url);
+---
+<meta http-equiv="refresh" content={`0; url=/${lang}/post/1`}>

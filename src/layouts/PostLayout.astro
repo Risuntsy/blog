@@ -6,12 +6,13 @@ import Post from "@/components/post/Post.astro";
 
 interface Props {
     post: CollectionEntry<"post">;
+    lang: string;
 }
 
-const { post } = Astro.props;
+const { post, lang } = Astro.props;
 ---
 
-<RootLayout title={post.data.title}>
+<RootLayout title={post.data.title} lang={lang}>
     <div class="grid justify-center">
         <Post post={post} />
     </div>

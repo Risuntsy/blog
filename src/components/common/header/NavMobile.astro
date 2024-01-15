@@ -1,10 +1,12 @@
 ---
 import HeaderLink from "./HeaderLink.astro";
 import { NAVIGATION } from "@/config";
-
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
 import MenuIcon from "@/components/icons/nav-mobile/index.astro";
 
 const links = NAVIGATION.left;
+const {lang} = getLangFromUrl(Astro.url);
+const t = useTranslations(lang, "header-links");
 ---
 
 <button class="sm:hidden mobile-menu">
@@ -23,8 +25,8 @@ const links = NAVIGATION.left;
         {
             links.map((link) => (
                 <div class="flex justify-center px-12 py-4">
-                    <HeaderLink class=" block sm:hidden" href={link.href}>
-                        {link.title}
+                    <HeaderLink class=" block sm:hidden" href={`/${lang}${link.href}`}>
+                        {`${t(link.title)}`}
                     </HeaderLink>
                 </div>
             ))
