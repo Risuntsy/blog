@@ -1,4 +1,8 @@
 {
+    "common":{
+        "prev-page":"Previous",
+        "next-page":"Next"
+    },
     "header-links": {
         "home": "Home",
         "posts": "Posts",
@@ -9,9 +13,28 @@
         "about": "About"
     },
     "index": {
-        "home": "Home"
+        "title": "Home"
     },
     "about": {
-        "about": "About"
+        "title": "About"
+    },
+    "category": {
+        "title":"Categories"
+    },
+    "tag":{
+        "title":"Tags"
+    },
+    "archiver":{
+        "title":"Archiver"
+    },
+    "feed":{
+        "title":"Feed"
+    },
+    "post":{
+        "title":"Posts",
+        "posted-at":  "Posted at",
+        "about":"About",
+        "read-more":"Read more",
+        "tags":"Tags"
     }
 }

@@ -1,4 +1,8 @@
 {
+    "common":{
+        "prev-page":"上一页",
+        "next-page":"下一页"
+    },
     "header-links": {
         "home": "首页",
         "posts": "帖子",
@@ -9,7 +13,28 @@
         "about": "关于"
     },
     "index": {
-        "home": "主页"
+        "title": "主页"
     },
-    "about":{}
+    "about": {
+        "title": "关于"
+    },
+    "category": {
+        "title": "分类"
+    },
+    "tag": {
+        "title": "标签"
+    },
+    "archiver":{
+        "title":"归档"
+    },
+    "feed":{
+        "title":"订阅"
+    },
+    "post":{
+        "title":"帖子",
+        "posted-at":  "发布于",
+        "about":"关于",
+        "read-more": "阅读全文",
+        "tags":"标签"
+    }
 }
