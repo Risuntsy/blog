@@ -3,14 +3,14 @@ import tailwind from "@astrojs/tailwind";
 
 // https://astro.build/config
 export default defineConfig({
-  redirects: {
-    "/": "/en"
-  },
-  integrations: [tailwind()],
-  markdown: {
-    shikiConfig: {
-      theme: "material-theme-lighter",
-      wrap: true,
+    redirects: {
+        "/post":"/en/post"
     },
-  },
+    integrations: [tailwind()],
+    markdown: {
+        shikiConfig: {
+            theme: "material-theme-lighter",
+            wrap: true,
+        },
+    },
 });

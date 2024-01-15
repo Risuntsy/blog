@@ -17,3 +17,8 @@ export function postDateCompareReverse(
     
     return b.data.created_at.getTime() - a.data.created_at.getTime();
 }
+
+export function removePostSlugLang(slug: string) {
+    const [_, ...inLangSlug] = slug.split("/");
+    return inLangSlug.join("/");
+}

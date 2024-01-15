@@ -1,24 +1,23 @@
 export const DESCRIPTION = "Risun's blog";
 export const SOURCE_LINK = "https://github.com/Risuntsy/blog";
-
 export const ITEMS_PER_PAGE = 5;
-
 // preview chars
 export const POST_PREVIEW_LENGTH = 240;
+
 
 export const NAVIGATION = {
     // site navigation
     left: [
-        { href: "/", title: "Home" },
-        { href: "/post/1", title: "Posts" },
-        { href: "/category", title: "Categorys" },
-        { href: "/tag", title: "Tags" },
-        { href: "/archiver", title: "Archiver" },
+        { href: "/", title: "home" },
+        { href: "/post/1", title: "posts" },
+        { href: "/category", title: "categories" },
+        { href: "/tag", title: "tags" },
+        { href: "/archiver", title: "archiver" },
     ],
     // persional info
     right: [
-        { href: "/feed", title: "RSS" },
-        { href: "/about", title: "About" },
+        { href: "/feed", title: "rss" },
+        { href: "/about", title: "about" },
     ],
 };
 
