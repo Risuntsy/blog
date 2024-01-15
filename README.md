@@ -15,22 +15,26 @@ Wordpress theme [Pixl](https://wordpress.com/theme/pixl) 源码:[pixl](https://g
 ## TODO
 
 - [x] dark theme 
-- [ ] archiver page / time line (mobile)
-- [ ] code block style
+- [ ] archiver page / timeline (mobile)
+- [ ] code block style (dark theme)
 - [ ] font style
 - [ ] code copy  
 - [ ] i18n  
+- [ ] comment
+- [ ] search
+- [ ] content sperate
+- [ ] theme toggle icon
+- [ ] Footer: social media link 
+- [ ] post language switch (preview and main)
 
-## Commands
+## Some Commands
 
-
-
-All commands are run from the root of the project, from a terminal:
+All commands are run with pnpm from the root of the project, from a terminal:
 
 | Command                   | Action                                           |
 | :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
+| `pnpm install`             | Installs dependencies                            |
+| `pnpm run dev`             | Starts local dev server at `localhost:4321`      |
+| `pnpm run build`           | Build your production site to `./dist/`          |
+| `pnpm run preview`         | Preview your build locally, before deploying     |
 
