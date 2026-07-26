@@ -1,14 +1,31 @@
-import { execSync } from "child_process";
-import { existsSync, symlinkSync, rmSync } from "fs";
-import { resolve } from "path";
+import { execFileSync } from "child_process";
+import {
+  existsSync,
+  mkdirSync,
+  renameSync,
+  rmSync,
+  statSync,
+  symlinkSync,
+} from "fs";
+import { dirname, resolve } from "path";
 
 const repo = process.env.CONTENT_REPO;
-const path = process.env.CONTENT_PATH;
+const contentPath = process.env.CONTENT_PATH;
 const target = resolve("src/content/post");
+const targetParent = dirname(target);
+const staging = resolve(targetParent, ".post-sync-tmp");
+
+function remove(path) {
+  rmSync(path, { recursive: true, force: true });
+}
 
 // Only act if an external source is configured
-if (!repo && !path) {
-  if (existsSync(target) && (existsSync(resolve(target, "en")) || existsSync(resolve(target, "zh-cn")))) {
+if (!repo && !contentPath) {
+  if (
+    existsSync(target) &&
+    (existsSync(resolve(target, "en")) ||
+      existsSync(resolve(target, "zh-cn")))
+  ) {
     console.log("[sync-content] using local content");
   } else {
     console.log("[sync-content] no local or external content found");
@@ -16,25 +33,40 @@ if (!repo && !path) {
   process.exit(0);
 }
 
-// Clean up existing content before pulling
-if (existsSync(target)) {
-  try { rmSync(target, { recursive: true, force: true }); } catch {}
-}
-
 if (repo) {
-  console.log(`[sync-content] cloning from ${repo}...`);
-  execSync(`git clone --depth 1 "${repo}" "${target}"`, { stdio: "inherit" });
-  // If repo has a posts/ subdirectory, use that
-  if (existsSync(resolve(target, "posts"))) {
-    const tmp = resolve(target, "_tmp");
-    execSync(`mv "${resolve(target, "posts")}" "${tmp}" && rm -rf "${target}" && mv "${tmp}" "${target}"`, { stdio: "inherit" });
+  console.log("[sync-content] cloning external content repository");
+  mkdirSync(targetParent, { recursive: true });
+  remove(staging);
+
+  try {
+    execFileSync("git", ["clone", "--depth", "1", "--", repo, staging], {
+      stdio: "inherit",
+    });
+
+    const posts = resolve(staging, "posts");
+    const source = existsSync(posts) ? posts : staging;
+    remove(resolve(staging, ".git"));
+    remove(target);
+    renameSync(source, target);
+    if (source !== staging) remove(staging);
+  } catch (error) {
+    remove(staging);
+    throw error;
   }
 } else {
-  const src = resolve(path);
-  if (!existsSync(src)) {
-    console.error(`[sync-content] CONTENT_PATH "${path}" not found`);
+  const source = resolve(contentPath);
+  if (!existsSync(source) || !statSync(source).isDirectory()) {
+    console.error(`[sync-content] CONTENT_PATH "${contentPath}" is not a directory`);
     process.exit(1);
   }
-  console.log(`[sync-content] symlinking ${src} -> ${target}`);
-  symlinkSync(src, target, "dir");
+
+  if (source === target) {
+    console.log("[sync-content] CONTENT_PATH already points at local content");
+    process.exit(0);
+  }
+
+  mkdirSync(targetParent, { recursive: true });
+  remove(target);
+  console.log(`[sync-content] symlinking ${source} -> ${target}`);
+  symlinkSync(source, target, "dir");
 }

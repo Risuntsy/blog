@@ -1,0 +1,31 @@
+[Unit]
+Description=Risun's static blog
+Wants=network-online.target
+After=network-online.target
+
+[Container]
+Image=localhost/risun-blog:latest
+ContainerName=risun-blog
+Pull=never
+PublishPort=127.0.0.1:11458:8080
+ReadOnly=true
+NoNewPrivileges=true
+DropCapability=ALL
+Tmpfs=/tmp:rw,nodev,nosuid,noexec,size=64m,mode=1777
+LogDriver=journald
+HealthCmd=/usr/bin/wget --quiet --spider http://127.0.0.1:8080/healthz
+HealthInterval=30s
+HealthTimeout=5s
+HealthRetries=3
+HealthStartPeriod=5s
+
+[Service]
+Restart=always
+RestartSec=5s
+TimeoutStartSec=120
+TimeoutStopSec=15
+MemoryMax=256M
+TasksMax=128
+
+[Install]
+WantedBy=default.target

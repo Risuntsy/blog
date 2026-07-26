@@ -1,0 +1,9 @@
+.git
+.astro
+.vscode
+dist
+node_modules
+CURRENT_STATE.md
+.env
+.env.*
+*.log
