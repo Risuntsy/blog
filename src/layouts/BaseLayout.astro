@@ -2,6 +2,7 @@
 import { t } from "#/i18n";
 import Header from "#/components/Header.astro";
 import Footer from "#/components/Footer.astro";
+import fusionPixelFontUrl from "#/assets/fonts/fusion-pixel/fusion-pixel-12px-monospaced-zh_hans.otf.woff2?url";
 import "#/styles/global.css";
 
 interface Props {
@@ -24,6 +25,13 @@ const desc = description || t(lang, "site_description");
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link
+      rel="preload"
+      href={fusionPixelFontUrl}
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={desc} />
     <link

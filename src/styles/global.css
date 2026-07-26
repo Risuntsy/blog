@@ -2,7 +2,8 @@
 
 @font-face {
   font-family: "Fusion Pixel";
-  src: url("/fonts/fusion-pixel-12px-monospaced-zh_hans.otf.woff2") format("woff2");
+  src: url("../assets/fonts/fusion-pixel/fusion-pixel-12px-monospaced-zh_hans.otf.woff2")
+    format("woff2");
   font-display: swap;
 }
 
