@@ -1,0 +1,29 @@
+---
+import { l, t } from "#/i18n";
+
+interface Props {
+  lang: string;
+  tags: Array<{ name: string; count: number }>;
+}
+
+const { lang, tags } = Astro.props;
+const max = Math.max(1, ...tags.map((x) => x.count));
+---
+
+<div class="tags" style="gap: 0.65rem">
+  {
+    tags.map(({ name, count }) => {
+      const scale = 0.85 + (count / max) * 0.45;
+      return (
+        <a
+          class="tag"
+          href={l(lang, `/tag/${name}`)}
+          style={`font-size: ${scale}rem`}
+          title={t(lang, "tag_count", { count })}
+        >
+          #{name}
+        </a>
+      );
+    })
+  }
+</div>

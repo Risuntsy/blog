@@ -1,0 +1,124 @@
+---
+import { t } from "#/i18n";
+import Header from "#/components/Header.astro";
+import Footer from "#/components/Footer.astro";
+import "#/styles/global.css";
+
+interface Props {
+  lang: string;
+  title?: string;
+  description?: string;
+  current?: string;
+  isHome?: boolean;
+}
+
+const { lang, title, description, current = "", isHome = false } = Astro.props;
+const pageTitle = title
+  ? `${title} | ${t(lang, "site_title")}`
+  : t(lang, "site_title");
+const desc = description || t(lang, "site_description");
+---
+
+<!doctype html>
+<html lang={lang === "zh-cn" ? "zh-CN" : "en"}>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={desc} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={t(lang, "site_title")}
+      href={`/${lang}/rss.xml`}
+    />
+    <title>{pageTitle}</title>
+    <script is:inline>
+      (() => {
+        const mode = localStorage.getItem("theme-mode") || "dark";
+
+        const dark =
+          mode === "dark" ||
+          (mode === "auto" &&
+            matchMedia("(prefers-color-scheme: dark)").matches);
+        if (dark) document.documentElement.classList.add("dark");
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <Header lang={lang} current={current} isHome={isHome} />
+      <main>
+        <slot />
+      </main>
+    </div>
+    <Footer lang={lang} />
+    <script>
+      async function copyText(text: string) {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(text);
+          return;
+        }
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+
+      function flashCopied(el: HTMLElement, restoreLabel?: string) {
+        el.dataset.state = "copied";
+        if (restoreLabel) el.setAttribute("aria-label", "Copied");
+        setTimeout(() => {
+          delete el.dataset.state;
+          if (restoreLabel) el.setAttribute("aria-label", restoreLabel);
+        }, 1200);
+      }
+
+      document.querySelectorAll("[data-copy]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          const el = btn as HTMLElement;
+          const win = el.closest(".code-window");
+          const code = win?.querySelector("pre")?.textContent ?? "";
+          try {
+            await copyText(code);
+            flashCopied(el, "Copy");
+          } catch {
+            el.setAttribute("aria-label", "Copy failed");
+            setTimeout(() => el.setAttribute("aria-label", "Copy"), 1200);
+          }
+        });
+      });
+
+      document.querySelectorAll("main :not(pre) > code").forEach((node) => {
+        const el = node as HTMLElement;
+        el.setAttribute("tabindex", "0");
+        el.setAttribute("role", "button");
+        el.setAttribute("title", "点击复制");
+        el.setAttribute("aria-label", `复制 ${el.textContent ?? ""}`);
+        const doCopy = async () => {
+          try {
+            await copyText(el.textContent ?? "");
+            flashCopied(el);
+          } catch {
+            /* ignore */
+          }
+        };
+        el.addEventListener("click", (e) => {
+          e.preventDefault();
+          doCopy();
+        });
+        el.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            doCopy();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,78 @@
+---
+import { LANGS, t, l } from "#/i18n";
+import BaseLayout from "#/layouts/BaseLayout.astro";
+import PostCard from "#/components/PostCard.astro";
+import Pagination from "#/components/Pagination.astro";
+import { getPosts } from "#/utils";
+
+export async function getStaticPaths() {
+  const pageSize = 10;
+  const paths: Array<{ params: { lang: string; tag: string; page?: string } }> =
+    [];
+  for (const lang of LANGS) {
+    const langPosts = await getPosts(lang);
+    const tags = [...new Set(langPosts.flatMap((p) => p.data.tags))];
+    for (const tag of tags) {
+      const count = langPosts.filter((p) => p.data.tags.includes(tag)).length;
+      if (count === 0) continue;
+      const totalPages = Math.ceil(count / pageSize);
+      paths.push({ params: { lang, tag } });
+      for (let i = 2; i <= totalPages; i++) {
+        paths.push({ params: { lang, tag, page: `page/${i}` } });
+      }
+    }
+  }
+  return paths;
+}
+
+const pageSize = 10;
+const lang = Astro.params.lang as string;
+const tag = Astro.params.tag as string;
+const currentPage = (() => {
+  const p = Astro.params.page;
+  if (!p) return 1;
+  const match = String(p).match(/page\/(\d+)$/);
+  return match ? parseInt(match[1], 10) : 1;
+})();
+
+const posts = (await getPosts(lang)).filter((p) => p.data.tags.includes(tag));
+const totalPages = Math.max(1, Math.ceil(posts.length / pageSize));
+const pagePosts = posts.slice(
+  (currentPage - 1) * pageSize,
+  currentPage * pageSize,
+);
+---
+
+<BaseLayout
+  lang={lang}
+  title={`${tag} | ${t(lang, "tag_title")}`}
+  current="tags"
+>
+  <header class="hero">
+    <p class="eyebrow">
+      <a href={l(lang, "/tag")}>← {t(lang, "tag_title")}</a>
+    </p>
+    <h1>#{tag}</h1>
+    <p>{t(lang, "tag_count", { count: posts.length })}</p>
+  </header>
+
+  <section class="post-list">
+    {
+      pagePosts.length > 0 ? (
+        <>
+          {pagePosts.map((post) => (
+            <PostCard post={post} />
+          ))}
+          <Pagination
+            lang={lang}
+            currentPage={currentPage}
+            lastPage={totalPages}
+            basePath={`/${lang}/tag/${tag}`}
+          />
+        </>
+      ) : (
+        <p class="meta">{t(lang, "not_found")}</p>
+      )
+    }
+  </section>
+</BaseLayout>

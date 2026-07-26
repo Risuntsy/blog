@@ -1,0 +1,36 @@
+---
+import { LANGS, t } from "#/i18n";
+import BaseLayout from "#/layouts/BaseLayout.astro";
+import TagCloud from "#/components/TagCloud.astro";
+import { getPosts } from "#/utils";
+
+export function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as string;
+const localePosts = await getPosts(lang);
+
+const tagMap = new Map<string, number>();
+for (const post of localePosts) {
+  for (const tag of post.data.tags) {
+    tagMap.set(tag, (tagMap.get(tag) || 0) + 1);
+  }
+}
+const tags = [...tagMap.entries()]
+  .map(([name, count]) => ({ name, count }))
+  .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+---
+
+<BaseLayout lang={lang} title={t(lang, "tag_title")} current="tags">
+  <header class="hero">
+    <h1>{t(lang, "tag_title")}</h1>
+  </header>
+  {
+    tags.length > 0 ? (
+      <TagCloud tags={tags} lang={lang} />
+    ) : (
+      <p class="meta">{t(lang, "not_found")}</p>
+    )
+  }
+</BaseLayout>

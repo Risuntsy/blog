@@ -1,0 +1,103 @@
+---
+import { t, l, LANGS } from "#/i18n";
+
+interface Props {
+  lang: string;
+  current?: string;
+  isHome?: boolean;
+}
+
+const { lang, current = "", isHome = false } = Astro.props;
+
+const links = [
+  { key: "posts", href: "", label: t(lang, "nav_posts") },
+  { key: "tags", href: "/tag", label: t(lang, "nav_tags") },
+  { key: "archive", href: "/archive", label: t(lang, "nav_archive") },
+  { key: "about", href: "/about", label: t(lang, "nav_about") },
+];
+---
+
+<nav class="nav">
+  <div class="nav-inner">
+    {
+      isHome ? (
+        <span class="site-title">{t(lang, "site_title")}</span>
+      ) : (
+        <a href={l(lang, "/")} class="site-title">
+          {t(lang, "site_title")}
+        </a>
+      )
+    }
+    <div class="nav-links">
+      {
+        links.map((item) =>
+          current === item.key ? (
+            <span class="nav-link" aria-current="page">
+              {item.label}
+            </span>
+          ) : (
+            <a href={l(lang, item.href)} class="nav-link">
+              {item.label}
+            </a>
+          ),
+        )
+      }
+    </div>
+    <div class="nav-tools">
+      <select id="theme" class="ctrl" aria-label="theme">
+        <option value="dark">{t(lang, "theme_dark")}</option>
+        <option value="light">{t(lang, "theme_light")}</option>
+        <option value="auto">{t(lang, "theme_auto")}</option>
+      </select>
+      <select id="lang-select" class="ctrl" aria-label="language">
+        {
+          LANGS.map((code) => (
+            <option value={code} selected={code === lang}>
+              {code === "zh-cn" ? "中文" : "EN"}
+            </option>
+          ))
+        }
+      </select>
+    </div>
+  </div>
+</nav>
+
+<script>
+  const modeKey = "theme-mode";
+  const root = document.documentElement;
+  const themeSel = document.getElementById("theme") as HTMLSelectElement | null;
+  const langSel = document.getElementById(
+    "lang-select",
+  ) as HTMLSelectElement | null;
+
+  function resolvedDark(mode: string) {
+    if (mode === "dark") return true;
+    if (mode === "light") return false;
+    return matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+
+  function applyTheme(mode: string) {
+    root.classList.toggle("dark", resolvedDark(mode));
+  }
+
+  const mode = localStorage.getItem(modeKey) || "dark";
+  if (themeSel) themeSel.value = mode;
+  applyTheme(mode);
+
+  themeSel?.addEventListener("change", () => {
+    const v = themeSel.value;
+    localStorage.setItem(modeKey, v);
+    applyTheme(v);
+  });
+
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+    if ((localStorage.getItem(modeKey) || "dark") === "auto")
+      applyTheme("auto");
+  });
+
+  langSel?.addEventListener("change", () => {
+    const target = langSel.value;
+    const path = location.pathname.replace(/^\/(en|zh-cn)/, `/${target}`);
+    location.href = path === "/" ? `/${target}` : path;
+  });
+</script>

@@ -1,0 +1,47 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { t, fmtDate, l } from "#/i18n";
+import { postSlug, postLang } from "#/utils";
+
+interface Props {
+  post: CollectionEntry<"post">;
+}
+
+const { post } = Astro.props;
+const lang = postLang(post);
+const slug = postSlug(post);
+const dateStr = fmtDate(lang, post.data.created_at);
+const href = l(lang, `/post/${slug}`);
+
+const bodyText = post.body
+  ?.replace(/^#+ .*/gm, "")
+  ?.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+  ?.replace(/[`*_~>#]/g, "")
+  ?.replace(/\n{2,}/g, " ")
+  ?.trim()
+  ?.slice(0, 200);
+const preview = post.data.description || (bodyText ? `${bodyText}…` : "");
+---
+
+<article class="card">
+  <h2 class="card-title">
+    <a href={href}>{post.data.title}</a>
+  </h2>
+  <p class="meta">{dateStr}</p>
+  {preview && <p class="card-excerpt">{preview}</p>}
+  {
+    (post.data.pinned || post.data.tags.length > 0) && (
+      <div class="tags">
+        {post.data.pinned && <span class="tag pinned">Pinned</span>}
+        {post.data.tags.map((tag) => (
+          <a class="tag" href={l(lang, `/tag/${tag}`)}>
+            #{tag}
+          </a>
+        ))}
+      </div>
+    )
+  }
+  <p class="card-more">
+    <a href={href}>{t(lang, "read_more")} →</a>
+  </p>
+</article>

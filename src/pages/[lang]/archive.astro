@@ -1,0 +1,59 @@
+---
+import { LANGS, t, fmtDate, l } from "#/i18n";
+import BaseLayout from "#/layouts/BaseLayout.astro";
+import { getPosts, postSlug } from "#/utils";
+
+export function getStaticPaths() {
+  return LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as string;
+const localePosts = await getPosts(lang);
+
+const yearMap = new Map<number, typeof localePosts>();
+for (const post of localePosts) {
+  const year = post.data.created_at.getFullYear();
+  if (!yearMap.has(year)) yearMap.set(year, []);
+  yearMap.get(year)!.push(post);
+}
+const years = [...yearMap.entries()].sort(([a], [b]) => b - a);
+---
+
+<BaseLayout lang={lang} title={t(lang, "archive_title")} current="archive">
+  <header class="hero">
+    <h1>{t(lang, "archive_title")}</h1>
+  </header>
+
+  {
+    years.length > 0 ? (
+      <div class="archive-list">
+        {years.map(([year, posts]) => (
+          <section class="card archive-year">
+            <h2 class="card-title">{year}</h2>
+            <div class="archive-rows">
+              {posts.map((post) => (
+                <div class="archive-row">
+                  <span class="date">
+                    {fmtDate(lang, post.data.created_at, {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </span>
+                  <a href={l(lang, `/post/${postSlug(post)}`)}>
+                    {post.data.title}
+                  </a>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    ) : (
+      <div class="empty-state">
+        <p class="meta" style="justify-content:center;margin:0">
+          {t(lang, "not_found")}
+        </p>
+      </div>
+    )
+  }
+</BaseLayout>

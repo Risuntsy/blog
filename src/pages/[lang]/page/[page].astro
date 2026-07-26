@@ -1,0 +1,52 @@
+---
+import { LANGS, t } from "#/i18n";
+import BaseLayout from "#/layouts/BaseLayout.astro";
+import PostCard from "#/components/PostCard.astro";
+import Pagination from "#/components/Pagination.astro";
+import { getPosts } from "#/utils";
+
+export async function getStaticPaths() {
+  const pageSize = 10;
+  const paths: Array<{ params: { lang: string; page: string } }> = [];
+  for (const lang of LANGS) {
+    const posts = await getPosts(lang);
+    const totalPages = Math.max(1, Math.ceil(posts.length / pageSize));
+    for (let i = 2; i <= totalPages; i++) {
+      paths.push({ params: { lang, page: String(i) } });
+    }
+  }
+  return paths;
+}
+
+const pageSize = 10;
+const lang = Astro.params.lang as string;
+const currentPage = parseInt(Astro.params.page as string, 10);
+const posts = await getPosts(lang);
+const totalPages = Math.max(1, Math.ceil(posts.length / pageSize));
+const pagePosts = posts.slice(
+  (currentPage - 1) * pageSize,
+  currentPage * pageSize,
+);
+---
+
+<BaseLayout lang={lang} title={t(lang, "nav_posts")} current="posts">
+  <section class="post-list">
+    {
+      pagePosts.length > 0 ? (
+        <>
+          {pagePosts.map((post) => (
+            <PostCard post={post} />
+          ))}
+          <Pagination
+            lang={lang}
+            currentPage={currentPage}
+            lastPage={totalPages}
+            basePath={`/${lang}`}
+          />
+        </>
+      ) : (
+        <p class="meta">{t(lang, "not_found")}</p>
+      )
+    }
+  </section>
+</BaseLayout>
