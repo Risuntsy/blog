@@ -100,4 +100,34 @@ const links = [
     const path = location.pathname.replace(/^\/(en|zh-cn)/, `/${target}`);
     location.href = path === "/" ? `/${target}` : path;
   });
+
+  const nav = document.querySelector<HTMLElement>(".nav");
+  let lastScrollY = Math.max(window.scrollY, 0);
+  let scrollTicking = false;
+
+  function updateNavVisibility() {
+    if (!nav) return;
+
+    const currentScrollY = Math.max(window.scrollY, 0);
+    const delta = currentScrollY - lastScrollY;
+
+    if (currentScrollY <= 8 || delta < -2) {
+      nav.classList.remove("nav-hidden");
+    } else if (delta > 2 && currentScrollY > nav.offsetHeight) {
+      nav.classList.add("nav-hidden");
+    }
+
+    lastScrollY = currentScrollY;
+    scrollTicking = false;
+  }
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (scrollTicking) return;
+      scrollTicking = true;
+      requestAnimationFrame(updateNavVisibility);
+    },
+    { passive: true },
+  );
 </script>
