@@ -9,6 +9,7 @@ const { lang } = Astro.props;
 const [poweredBefore, poweredAfter] = t(lang, "footer_powered").split(
   "${astro}",
 );
+const [themeBefore, themeAfter] = t(lang, "footer_theme").split("${pixl}");
 ---
 
 <footer class="footer">
@@ -24,6 +25,11 @@ const [poweredBefore, poweredAfter] = t(lang, "footer_powered").split(
       target="_blank"
       rel="noopener">Astro</a
     >{poweredAfter}
-    · Neo-Pixl
+    ·
+    {themeBefore}<a
+      href="https://github.com/Automattic/themes/tree/trunk/pixl"
+      target="_blank"
+      rel="noopener">Pixl</a
+    >{themeAfter}
   </div>
 </footer>

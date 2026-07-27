@@ -28,6 +28,7 @@
   "back_home": "Back to home",
   "footer_source": "Source",
   "footer_powered": "Powered by ${astro}",
+  "footer_theme": "Neo-Pixl is inspired by ${pixl}",
   "post_untitled": "Untitled",
   "rss_title": "Subscribe",
   "rss_intro": "Choose a subscription link:",
