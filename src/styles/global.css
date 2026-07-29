@@ -4,7 +4,33 @@
   font-family: "Fusion Pixel";
   src: url("../assets/fonts/fusion-pixel/fusion-pixel-12px-monospaced-zh_hans.otf.woff2")
     format("woff2");
-  font-display: swap;
+  font-display: optional;
+}
+
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: page-out 100ms ease-in both;
+}
+
+::view-transition-new(root) {
+  animation: page-in 180ms ease-out both;
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
 }
 
 /* 色板 Pixl · dark 为主 */
@@ -87,6 +113,10 @@ html.dark {
 
 html {
   color-scheme: light;
+  min-height: 100%;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  background-color: var(--bg);
 }
 html.dark {
   color-scheme: dark;
@@ -131,6 +161,11 @@ a:focus-visible {
 a:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
+}
+
+blog-header,
+copy-region {
+  display: block;
 }
 
 .container {
@@ -186,12 +221,6 @@ select.ctrl {
   position: sticky;
   top: 0.65rem;
   z-index: 20;
-  transition: transform 180ms ease;
-}
-
-.nav.nav-hidden {
-  transform: translateY(calc(-100% - 1.5rem));
-  pointer-events: none;
 }
 
 .nav-inner {
@@ -323,9 +352,14 @@ select.ctrl option {
   box-shadow: var(--shadow-pixel);
   padding: 1.1rem 1.15rem;
   margin: 0;
-  transition: background-color var(--ease), box-shadow var(--ease);
+  transition:
+    transform var(--ease),
+    background-color var(--ease),
+    box-shadow var(--ease);
 }
-.card:hover {
+.card:hover,
+.card:focus-within {
+  transform: translate(2px, 2px);
   background-color: var(--surface-2);
   box-shadow: var(--shadow-pixel-hover);
 }
@@ -826,5 +860,10 @@ main pre:not(.code-window pre) code {
   *::before,
   *::after {
     transition: none !important;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
   }
 }

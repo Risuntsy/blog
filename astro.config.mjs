@@ -41,11 +41,44 @@ function externalLinks() {
   };
 }
 
+function copyableInlineCode() {
+  return (/** @type {any} */ tree) => {
+    /** @param {any} node @param {any} parent */
+    function visit(node, parent) {
+      if (
+        node?.type === "element" &&
+        node.tagName === "code" &&
+        parent?.tagName !== "pre"
+      ) {
+        const properties = node.properties || (node.properties = {});
+        const text = node.children
+          ?.filter((/** @type {any} */ child) => child.type === "text")
+          .map((/** @type {any} */ child) => child.value)
+          .join("") ?? "";
+
+        properties["data-copy-inline"] = "";
+        properties.tabIndex = 0;
+        properties.role = "button";
+        properties.title = "Copy";
+        properties.ariaLabel = `Copy ${text}`;
+      }
+
+      node?.children?.forEach((/** @type {any} */ child) => visit(child, node));
+    }
+
+    visit(tree, undefined);
+  };
+}
+
 export default defineConfig({
   site: siteUrl.href,
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: "hover",
+  },
   integrations: [mdx(), sitemap()],
   markdown: {
-    processor: unified({ rehypePlugins: [externalLinks] }),
+    processor: unified({ rehypePlugins: [externalLinks, copyableInlineCode] }),
   },
   vite: {
     plugins: [tailwindcss()],

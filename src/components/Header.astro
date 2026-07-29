@@ -17,117 +17,106 @@ const links = [
 ];
 ---
 
-<nav class="nav">
-  <div class="nav-inner">
-    {
-      isHome ? (
-        <span class="site-title">{t(lang, "site_title")}</span>
-      ) : (
-        <a href={l(lang, "/")} class="site-title">
-          {t(lang, "site_title")}
-        </a>
-      )
-    }
-    <div class="nav-links">
+<blog-header>
+  <nav class="nav">
+    <div class="nav-inner">
       {
-        links.map((item) =>
-          current === item.key ? (
-            <span class="nav-link" aria-current="page">
-              {item.label}
-            </span>
-          ) : (
-            <a href={l(lang, item.href)} class="nav-link">
-              {item.label}
-            </a>
-          ),
+        isHome ? (
+          <span class="site-title">{t(lang, "site_title")}</span>
+        ) : (
+          <a href={l(lang, "/")} class="site-title">
+            {t(lang, "site_title")}
+          </a>
         )
       }
-    </div>
-    <div class="nav-tools">
-      <select id="theme" class="ctrl" aria-label="theme">
-        <option value="dark">{t(lang, "theme_dark")}</option>
-        <option value="light">{t(lang, "theme_light")}</option>
-        <option value="auto">{t(lang, "theme_auto")}</option>
-      </select>
-      <select id="lang-select" class="ctrl" aria-label="language">
+      <div class="nav-links">
         {
-          LANGS.map((code) => (
-            <option value={code} selected={code === lang}>
-              {code === "zh-cn" ? "中文" : "EN"}
-            </option>
-          ))
+          links.map((item) =>
+            current === item.key ? (
+              <span class="nav-link" aria-current="page">
+                {item.label}
+              </span>
+            ) : (
+              <a href={l(lang, item.href)} class="nav-link">
+                {item.label}
+              </a>
+            ),
+          )
         }
-      </select>
+      </div>
+      <div class="nav-tools">
+        <select data-theme class="ctrl" aria-label="theme">
+          <option value="dark">{t(lang, "theme_dark")}</option>
+          <option value="light">{t(lang, "theme_light")}</option>
+          <option value="auto">{t(lang, "theme_auto")}</option>
+        </select>
+        <select data-language class="ctrl" aria-label="language">
+          {
+            LANGS.map((code) => (
+              <option value={code} selected={code === lang}>
+                {code === "zh-cn" ? "中文" : "EN"}
+              </option>
+            ))
+          }
+        </select>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
+</blog-header>
 
 <script>
-  const modeKey = "theme-mode";
-  const root = document.documentElement;
-  const themeSel = document.getElementById("theme") as HTMLSelectElement | null;
-  const langSel = document.getElementById(
-    "lang-select",
-  ) as HTMLSelectElement | null;
+  class BlogHeader extends HTMLElement {
+    private readonly colorScheme = matchMedia("(prefers-color-scheme: dark)");
+    private readonly themeSelect =
+      this.querySelector<HTMLSelectElement>("[data-theme]");
+    private readonly languageSelect =
+      this.querySelector<HTMLSelectElement>("[data-language]");
 
-  function resolvedDark(mode: string) {
-    if (mode === "dark") return true;
-    if (mode === "light") return false;
-    return matchMedia("(prefers-color-scheme: dark)").matches;
-  }
-
-  function applyTheme(mode: string) {
-    root.classList.toggle("dark", resolvedDark(mode));
-  }
-
-  const mode = localStorage.getItem(modeKey) || "dark";
-  if (themeSel) themeSel.value = mode;
-  applyTheme(mode);
-
-  themeSel?.addEventListener("change", () => {
-    const v = themeSel.value;
-    localStorage.setItem(modeKey, v);
-    applyTheme(v);
-  });
-
-  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-    if ((localStorage.getItem(modeKey) || "dark") === "auto")
-      applyTheme("auto");
-  });
-
-  langSel?.addEventListener("change", () => {
-    const target = langSel.value;
-    const path = location.pathname.replace(/^\/(en|zh-cn)/, `/${target}`);
-    location.href = path === "/" ? `/${target}` : path;
-  });
-
-  const nav = document.querySelector<HTMLElement>(".nav");
-  let lastScrollY = Math.max(window.scrollY, 0);
-  let scrollTicking = false;
-
-  function updateNavVisibility() {
-    if (!nav) return;
-
-    const currentScrollY = Math.max(window.scrollY, 0);
-    const delta = currentScrollY - lastScrollY;
-
-    if (currentScrollY <= 8 || delta < -2) {
-      nav.classList.remove("nav-hidden");
-    } else if (delta > 2 && currentScrollY > nav.offsetHeight) {
-      nav.classList.add("nav-hidden");
+    private applyTheme(mode: string) {
+      const dark =
+        mode === "dark" || (mode === "auto" && this.colorScheme.matches);
+      document.documentElement.classList.toggle("dark", dark);
     }
 
-    lastScrollY = currentScrollY;
-    scrollTicking = false;
+    private onThemeChange = () => {
+      if (!this.themeSelect) return;
+      localStorage.setItem("theme-mode", this.themeSelect.value);
+      this.applyTheme(this.themeSelect.value);
+    };
+
+    private onColorSchemeChange = () => {
+      const mode = localStorage.getItem("theme-mode") || "dark";
+      if (mode === "auto") this.applyTheme(mode);
+    };
+
+    private onLanguageChange = () => {
+      if (!this.languageSelect) return;
+      const url = new URL(location.href);
+      url.pathname = url.pathname.replace(
+        /^\/(en|zh-cn)/,
+        `/${this.languageSelect.value}`,
+      );
+      location.assign(url);
+    };
+
+    connectedCallback() {
+      const mode = localStorage.getItem("theme-mode") || "dark";
+      if (this.themeSelect) this.themeSelect.value = mode;
+      this.applyTheme(mode);
+
+      this.themeSelect?.addEventListener("change", this.onThemeChange);
+      this.languageSelect?.addEventListener("change", this.onLanguageChange);
+      this.colorScheme.addEventListener("change", this.onColorSchemeChange);
+    }
+
+    disconnectedCallback() {
+      this.themeSelect?.removeEventListener("change", this.onThemeChange);
+      this.languageSelect?.removeEventListener("change", this.onLanguageChange);
+      this.colorScheme.removeEventListener("change", this.onColorSchemeChange);
+    }
   }
 
-  window.addEventListener(
-    "scroll",
-    () => {
-      if (scrollTicking) return;
-      scrollTicking = true;
-      requestAnimationFrame(updateNavVisibility);
-    },
-    { passive: true },
-  );
+  if (!customElements.get("blog-header")) {
+    customElements.define("blog-header", BlogHeader);
+  }
 </script>

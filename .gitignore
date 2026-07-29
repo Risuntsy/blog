@@ -27,3 +27,4 @@ src/content/post/
 
 # local source-of-truth document (not part of the code repository)
 CURRENT_STATE.md
+TODO.md
