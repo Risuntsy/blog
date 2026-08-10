@@ -1,13 +1,14 @@
 ---
 import { useTranslate, l, LANGS, languagePath } from "#/i18n";
+import Search from "#/components/Search.astro";
+import FeedPicker from "#/components/FeedPicker.astro";
 
 interface Props {
   lang: string;
   current?: string;
-  isHome?: boolean;
 }
 
-const { lang, current = "", isHome = false } = Astro.props;
+const { lang, current = "" } = Astro.props;
 const t = useTranslate(lang);
 const languagePaths = Object.fromEntries(
   LANGS.map((code) => [code, languagePath(Astro.url.pathname, code)]),
@@ -17,22 +18,12 @@ const links = [
   { key: "posts", href: "", label: t("nav_posts") },
   { key: "tags", href: "/tag", label: t("nav_tags") },
   { key: "archive", href: "/archive", label: t("nav_archive") },
-  { key: "about", href: "/about", label: t("nav_about") },
 ];
 ---
 
 <blog-header>
   <nav class="nav">
     <div class="nav-inner">
-      {
-        isHome ? (
-          <span class="site-title">{t("site_title")}</span>
-        ) : (
-          <a href={l(lang, "/")} class="site-title">
-            {t("site_title")}
-          </a>
-        )
-      }
       <div class="nav-links">
         {
           links.map((item) =>
@@ -49,11 +40,6 @@ const links = [
         }
       </div>
       <div class="nav-tools">
-        <select data-theme class="ctrl" aria-label="theme">
-          <option value="dark">{t("theme_dark")}</option>
-          <option value="light">{t("theme_light")}</option>
-          <option value="auto">{t("theme_auto")}</option>
-        </select>
         <select data-language class="ctrl" aria-label="language">
           {
             LANGS.map((code) => (
@@ -63,6 +49,15 @@ const links = [
             ))
           }
         </select>
+        <select data-theme class="ctrl" aria-label="theme">
+          <option value="dark">{t("theme_dark")}</option>
+          <option value="light">{t("theme_light")}</option>
+          <option value="auto">{t("theme_auto")}</option>
+        </select>
+        <div class="nav-actions">
+          <Search lang={lang} />
+          <FeedPicker lang={lang} />
+        </div>
       </div>
     </div>
   </nav>

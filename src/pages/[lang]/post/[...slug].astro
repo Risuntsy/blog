@@ -37,7 +37,7 @@ const updatedStr = post.data.updated_at
   description={post.data.description}
   current="posts"
 >
-  <article class="article">
+  <article class="article" data-pagefind-body>
     <p class="meta">
       <span>{t("posted_at", { date: dateStr })}</span>
       {
@@ -46,7 +46,7 @@ const updatedStr = post.data.updated_at
         )
       }
     </p>
-    <h1>{post.data.title}</h1>
+    <h1 data-pagefind-meta="title">{post.data.title}</h1>
     {
       post.data.tags.length > 0 && (
         <div class="tags">

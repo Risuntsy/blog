@@ -23,6 +23,7 @@
   "search_title": "Search",
   "search_placeholder": "Search posts...",
   "search_no_results": "No results found",
+  "search_result_count": "${count} results",
   "search_not_available": "Search not available (build with pagefind first)",
   "not_found": "Page not found",
   "back_home": "Back to home",
@@ -35,6 +36,8 @@
   "rss_all": "All languages",
   "rss_en": "English only",
   "rss_zh": "简体中文 only",
+  "close": "Close",
+  "copy_failed": "Copy failed",
   "copy_link": "Copy link",
   "copied": "Copied!"
 }

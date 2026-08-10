@@ -10,10 +10,9 @@ interface Props {
   title?: string;
   description?: string;
   current?: string;
-  isHome?: boolean;
 }
 
-const { lang, title, description, current = "", isHome = false } = Astro.props;
+const { lang, title, description, current = "" } = Astro.props;
 const t = useTranslate(lang);
 const pageTitle = title
   ? `${title} | ${t("site_title")}`
@@ -56,7 +55,7 @@ const desc = description || t("site_description");
   </head>
   <body>
     <div class="container">
-      <Header lang={lang} current={current} isHome={isHome} />
+      <Header lang={lang} current={current} />
       <copy-region>
         <main>
           <slot />

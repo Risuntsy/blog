@@ -66,6 +66,7 @@ export function searchStrings(locale: string) {
   return {
     placeholder: t("search_placeholder"),
     no_results: t("search_no_results"),
+    result_count: t("search_result_count"),
     not_available: t("search_not_available"),
     untitled: t("post_untitled"),
     btn: t("nav_search"),

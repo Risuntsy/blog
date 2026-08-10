@@ -1,0 +1,225 @@
+---
+import { searchStrings, useTranslate } from "#/i18n";
+
+interface Props {
+  lang: string;
+}
+
+const { lang } = Astro.props;
+const t = useTranslate(lang);
+const strings = searchStrings(lang);
+const titleId = `search-title-${lang}`;
+---
+
+<search-control
+  data-lang={lang}
+  data-no-results={strings.no_results}
+  data-not-available={strings.not_available}
+  data-result-count={strings.result_count}
+  data-untitled={strings.untitled}
+>
+  <button
+    class="nav-icon"
+    type="button"
+    data-open-search
+    aria-label={strings.btn}
+    title={strings.btn}
+  >
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M2 2h8v2h2v6h-2v2H8v-2h2V4H4v6h4v2H2z"></path>
+      <path d="m10 10 4 4-1 1-4-4z"></path>
+    </svg>
+  </button>
+
+  <dialog class="tool-dialog search-dialog" aria-labelledby={titleId}>
+    <div class="dialog-head">
+      <h2 id={titleId}>{t("search_title")}</h2>
+      <button
+        class="dialog-close"
+        type="button"
+        data-close-dialog
+        aria-label={t("close")}
+        title={t("close")}
+      >
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M3 2 8 7l5-5 1 1-5 5 5 5-1 1-5-5-5 5-1-1 5-5-5-5z"></path>
+        </svg>
+      </button>
+    </div>
+    <form class="search-form" role="search" data-search-form>
+      <label class="sr-only" for={`search-input-${lang}`}>{strings.btn}</label>
+      <input
+        id={`search-input-${lang}`}
+        class="search-input"
+        name="q"
+        type="search"
+        placeholder={strings.placeholder}
+        autocomplete="off"
+      />
+      <button class="btn" type="submit">{strings.btn}</button>
+    </form>
+    <p class="search-status meta" data-search-status aria-live="polite"></p>
+    <ol class="search-results" data-search-results></ol>
+  </dialog>
+</search-control>
+
+<script>
+  interface PagefindResultData {
+    url: string;
+    excerpt?: string;
+    meta?: Record<string, string>;
+  }
+
+  interface PagefindResult {
+    data(): Promise<PagefindResultData>;
+  }
+
+  interface PagefindModule {
+    search(query: string): Promise<{ results: PagefindResult[] }>;
+  }
+
+  class SearchControl extends HTMLElement {
+    private readonly openButton =
+      this.querySelector<HTMLButtonElement>("[data-open-search]");
+    private readonly closeButton = this.querySelector<HTMLButtonElement>(
+      "[data-close-dialog]",
+    );
+    private readonly dialog = this.querySelector<HTMLDialogElement>("dialog");
+    private readonly form =
+      this.querySelector<HTMLFormElement>("[data-search-form]");
+    private readonly input = this.querySelector<HTMLInputElement>("input");
+    private readonly status = this.querySelector<HTMLElement>(
+      "[data-search-status]",
+    );
+    private readonly results = this.querySelector<HTMLOListElement>(
+      "[data-search-results]",
+    );
+    private pagefind?: Promise<PagefindModule>;
+    private searchId = 0;
+    private debounceId?: number;
+
+    private onOpen = () => {
+      if (!this.dialog?.open) this.dialog?.showModal();
+      requestAnimationFrame(() => this.input?.focus({ preventScroll: true }));
+    };
+
+    private onClose = () => this.dialog?.close();
+
+    private onBackdropClick = (event: MouseEvent) => {
+      if (!this.dialog || event.target !== this.dialog) return;
+      const bounds = this.dialog.getBoundingClientRect();
+      const outside =
+        event.clientX < bounds.left ||
+        event.clientX > bounds.right ||
+        event.clientY < bounds.top ||
+        event.clientY > bounds.bottom;
+      if (outside) this.dialog.close();
+    };
+
+    private onSubmit = (event: SubmitEvent) => {
+      event.preventDefault();
+      void this.search(this.input?.value.trim() ?? "");
+    };
+
+    private onInput = () => {
+      window.clearTimeout(this.debounceId);
+      this.debounceId = window.setTimeout(() => {
+        void this.search(this.input?.value.trim() ?? "");
+      }, 180);
+    };
+
+    connectedCallback() {
+      this.openButton?.addEventListener("click", this.onOpen);
+      this.closeButton?.addEventListener("click", this.onClose);
+      this.dialog?.addEventListener("click", this.onBackdropClick);
+      this.form?.addEventListener("submit", this.onSubmit);
+      this.input?.addEventListener("input", this.onInput);
+    }
+
+    disconnectedCallback() {
+      this.openButton?.removeEventListener("click", this.onOpen);
+      this.closeButton?.removeEventListener("click", this.onClose);
+      this.dialog?.removeEventListener("click", this.onBackdropClick);
+      this.form?.removeEventListener("submit", this.onSubmit);
+      this.input?.removeEventListener("input", this.onInput);
+      window.clearTimeout(this.debounceId);
+    }
+
+    private loadPagefind() {
+      if (!this.pagefind) {
+        const pagefindUrl = "/pagefind/pagefind.js";
+        this.pagefind = import(/* @vite-ignore */ pagefindUrl) as Promise<PagefindModule>;
+      }
+      return this.pagefind;
+    }
+
+    private async search(query: string) {
+      const currentSearch = ++this.searchId;
+      this.results?.replaceChildren();
+
+      if (!query) {
+        if (this.status) this.status.textContent = "";
+        return;
+      }
+
+      try {
+        const pagefind = await this.loadPagefind();
+        const response = await pagefind.search(query);
+        const resolved = await Promise.all(
+          response.results.map((result) => result.data()),
+        );
+        if (currentSearch !== this.searchId) return;
+
+        const langPrefix = `/${this.dataset.lang}/`;
+        const matches = resolved.filter((result) => {
+          const resultUrl = new URL(result.url, location.origin);
+          return resultUrl.pathname.startsWith(langPrefix);
+        });
+
+        if (this.status) {
+          this.status.textContent = matches.length
+            ? (this.dataset.resultCount ?? "${count}").replace(
+                "${count}",
+                String(matches.length),
+              )
+            : (this.dataset.noResults ?? "");
+        }
+
+        for (const result of matches) {
+          const item = document.createElement("li");
+          item.className = "search-result card";
+
+          const title = document.createElement("h3");
+          title.className = "card-title";
+          const link = document.createElement("a");
+          link.href = result.url;
+          link.textContent = result.meta?.title || this.dataset.untitled || "";
+          title.append(link);
+          item.append(title);
+
+          if (result.excerpt) {
+            const excerpt = document.createElement("p");
+            excerpt.className = "card-excerpt";
+            const parsed = new DOMParser().parseFromString(
+              result.excerpt,
+              "text/html",
+            );
+            excerpt.textContent = parsed.body.textContent;
+            item.append(excerpt);
+          }
+
+          this.results?.append(item);
+        }
+      } catch {
+        if (currentSearch !== this.searchId) return;
+        if (this.status) {
+          this.status.textContent = this.dataset.notAvailable ?? "";
+        }
+      }
+    }
+  }
+
+  if (!customElements.get("search-control")) {
+    customElements.define("search-control", SearchControl);
+  }
+</script>

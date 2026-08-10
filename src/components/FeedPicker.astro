@@ -1,0 +1,168 @@
+---
+import { useTranslate } from "#/i18n";
+
+interface Props {
+  lang: string;
+}
+
+const { lang } = Astro.props;
+const t = useTranslate(lang);
+const titleId = `feed-title-${lang}`;
+const feeds = [
+  { href: new URL("/rss.xml", Astro.site), label: t("rss_all") },
+  { href: new URL("/en/rss.xml", Astro.site), label: t("rss_en") },
+  { href: new URL("/zh-cn/rss.xml", Astro.site), label: t("rss_zh") },
+];
+---
+
+<feed-picker
+  data-copied={t("copied")}
+  data-copy-failed={t("copy_failed")}
+>
+  <button
+    class="nav-icon"
+    type="button"
+    data-open-feed
+    aria-label={t("nav_feed")}
+    title={t("nav_feed")}
+  >
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M2 2v2c5.5 0 10 4.5 10 10h2C14 7.4 8.6 2 2 2z"></path>
+      <path d="M2 7v2c2.8 0 5 2.2 5 5h2c0-3.9-3.1-7-7-7z"></path>
+      <path d="M2 12h2v2H2z"></path>
+    </svg>
+  </button>
+
+  <dialog class="tool-dialog feed-dialog" aria-labelledby={titleId}>
+    <div class="dialog-head">
+      <div>
+        <h2 id={titleId}>{t("rss_title")}</h2>
+        <p>{t("rss_intro")}</p>
+      </div>
+      <button
+        class="dialog-close"
+        type="button"
+        data-close-dialog
+        aria-label={t("close")}
+        title={t("close")}
+      >
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M3 2 8 7l5-5 1 1-5 5 5 5-1 1-5-5-5 5-1-1 5-5-5-5z"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="feed-options">
+      {
+        feeds.map(({ href, label }) => (
+          <button class="feed-option" type="button" data-feed-url={href.href}>
+            <span>{label}</span>
+            <small>{href.pathname}</small>
+          </button>
+        ))
+      }
+    </div>
+    <p class="feed-status meta" data-feed-status aria-live="polite"></p>
+  </dialog>
+</feed-picker>
+
+<script>
+  class FeedPicker extends HTMLElement {
+    private readonly openButton =
+      this.querySelector<HTMLButtonElement>("[data-open-feed]");
+    private readonly closeButton = this.querySelector<HTMLButtonElement>(
+      "[data-close-dialog]",
+    );
+    private readonly dialog = this.querySelector<HTMLDialogElement>("dialog");
+    private readonly options = this.querySelectorAll<HTMLButtonElement>(
+      "[data-feed-url]",
+    );
+    private readonly status = this.querySelector<HTMLElement>(
+      "[data-feed-status]",
+    );
+
+    private onOpen = () => {
+      if (!this.dialog?.open) this.dialog?.showModal();
+    };
+
+    private onClose = () => this.dialog?.close();
+
+    private onBackdropClick = (event: MouseEvent) => {
+      if (!this.dialog || event.target !== this.dialog) return;
+      const bounds = this.dialog.getBoundingClientRect();
+      const outside =
+        event.clientX < bounds.left ||
+        event.clientX > bounds.right ||
+        event.clientY < bounds.top ||
+        event.clientY > bounds.bottom;
+      if (outside) this.dialog.close();
+    };
+
+    private onSelect = (event: MouseEvent) => {
+      const option = event.currentTarget;
+      if (!(option instanceof HTMLButtonElement)) return;
+      const feedUrl = option.dataset.feedUrl;
+      if (!feedUrl) return;
+      void this.copy(feedUrl, option);
+    };
+
+    connectedCallback() {
+      this.openButton?.addEventListener("click", this.onOpen);
+      this.closeButton?.addEventListener("click", this.onClose);
+      this.dialog?.addEventListener("click", this.onBackdropClick);
+      this.options.forEach((option) =>
+        option.addEventListener("click", this.onSelect),
+      );
+    }
+
+    disconnectedCallback() {
+      this.openButton?.removeEventListener("click", this.onOpen);
+      this.closeButton?.removeEventListener("click", this.onClose);
+      this.dialog?.removeEventListener("click", this.onBackdropClick);
+      this.options.forEach((option) =>
+        option.removeEventListener("click", this.onSelect),
+      );
+    }
+
+    private async copy(feedUrl: string, option: HTMLButtonElement) {
+      try {
+        await this.writeClipboard(feedUrl);
+        this.options.forEach((item) => delete item.dataset.state);
+        option.dataset.state = "copied";
+        if (this.status) this.status.textContent = this.dataset.copied ?? "";
+      } catch {
+        if (this.status) {
+          this.status.textContent = this.dataset.copyFailed ?? "";
+        }
+      }
+    }
+
+    private async writeClipboard(text: string) {
+      if (navigator.clipboard?.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          return;
+        } catch {
+          // Fall through for browsers that deny the async clipboard API.
+        }
+      }
+
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.readOnly = true;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.append(textarea);
+      textarea.select();
+      const legacyCopy = Reflect.get(document, "execCommand") as (
+        command: string,
+      ) => boolean;
+      const copied = legacyCopy.call(document, "copy");
+      textarea.remove();
+      if (!copied) throw new Error("Copy failed");
+    }
+  }
+
+  if (!customElements.get("feed-picker")) {
+    customElements.define("feed-picker", FeedPicker);
+  }
+</script>
