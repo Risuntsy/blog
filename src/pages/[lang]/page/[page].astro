@@ -1,5 +1,5 @@
 ---
-import { LANGS, t } from "#/i18n";
+import { LANGS, useTranslate } from "#/i18n";
 import BaseLayout from "#/layouts/BaseLayout.astro";
 import PostCard from "#/components/PostCard.astro";
 import Pagination from "#/components/Pagination.astro";
@@ -20,6 +20,7 @@ export async function getStaticPaths() {
 
 const pageSize = 10;
 const lang = Astro.params.lang as string;
+const t = useTranslate(lang);
 const currentPage = parseInt(Astro.params.page as string, 10);
 const posts = await getPosts(lang);
 const totalPages = Math.max(1, Math.ceil(posts.length / pageSize));
@@ -29,7 +30,7 @@ const pagePosts = posts.slice(
 );
 ---
 
-<BaseLayout lang={lang} title={t(lang, "nav_posts")} current="posts">
+<BaseLayout lang={lang} title={t("nav_posts")} current="posts">
   <section class="post-list">
     {
       pagePosts.length > 0 ? (
@@ -45,7 +46,7 @@ const pagePosts = posts.slice(
           />
         </>
       ) : (
-        <p class="meta">{t(lang, "not_found")}</p>
+        <p class="meta">{t("not_found")}</p>
       )
     }
   </section>

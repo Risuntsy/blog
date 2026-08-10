@@ -1,5 +1,5 @@
 ---
-import { LANGS, t, fmtDate, l } from "#/i18n";
+import { LANGS, useTranslate, fmtDate, l } from "#/i18n";
 import BaseLayout from "#/layouts/BaseLayout.astro";
 import { getPosts, postSlug } from "#/utils";
 
@@ -8,6 +8,7 @@ export function getStaticPaths() {
 }
 
 const lang = Astro.params.lang as string;
+const t = useTranslate(lang);
 const localePosts = await getPosts(lang);
 
 const yearMap = new Map<number, typeof localePosts>();
@@ -19,9 +20,9 @@ for (const post of localePosts) {
 const years = [...yearMap.entries()].sort(([a], [b]) => b - a);
 ---
 
-<BaseLayout lang={lang} title={t(lang, "archive_title")} current="archive">
+<BaseLayout lang={lang} title={t("archive_title")} current="archive">
   <header class="hero">
-    <h1>{t(lang, "archive_title")}</h1>
+    <h1>{t("archive_title")}</h1>
   </header>
 
   {
@@ -51,7 +52,7 @@ const years = [...yearMap.entries()].sort(([a], [b]) => b - a);
     ) : (
       <div class="empty-state">
         <p class="meta" style="justify-content:center;margin:0">
-          {t(lang, "not_found")}
+          {t("not_found")}
         </p>
       </div>
     )

@@ -1,6 +1,6 @@
 ---
 import { getCollection, render } from "astro:content";
-import { LANGS, t, fmtDate, l } from "#/i18n";
+import { LANGS, useTranslate, fmtDate, l } from "#/i18n";
 import BaseLayout from "#/layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
@@ -14,6 +14,7 @@ export async function getStaticPaths() {
 }
 
 const lang = Astro.params.lang as string;
+const t = useTranslate(lang);
 const slug = Astro.params.slug as string;
 
 const allPosts = await getCollection("post");
@@ -38,10 +39,10 @@ const updatedStr = post.data.updated_at
 >
   <article class="article">
     <p class="meta">
-      <span>{t(lang, "posted_at", { date: dateStr })}</span>
+      <span>{t("posted_at", { date: dateStr })}</span>
       {
         updatedStr && updatedStr !== dateStr && (
-          <span>{t(lang, "updated_at", { date: updatedStr })}</span>
+          <span>{t("updated_at", { date: updatedStr })}</span>
         )
       }
     </p>

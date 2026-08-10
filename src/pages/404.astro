@@ -1,16 +1,17 @@
 ---
 import BaseLayout from "#/layouts/BaseLayout.astro";
-import { t } from "#/i18n";
+import { useTranslate } from "#/i18n";
 
 const lang = "en";
+const t = useTranslate(lang);
 ---
 
-<BaseLayout lang={lang} title={t(lang, "not_found")}>
+<BaseLayout lang={lang} title={t("not_found")}>
   <header class="hero" style="text-align:center">
     <p class="eyebrow">404</p>
-    <h1>{t(lang, "not_found")}</h1>
+    <h1>{t("not_found")}</h1>
     <div class="center" style="margin-top:1.5rem">
-      <a class="btn" href={`/${lang}/`}>{t(lang, "back_home")}</a>
+      <a class="btn" href={`/${lang}/`}>{t("back_home")}</a>
     </div>
   </header>
 </BaseLayout>

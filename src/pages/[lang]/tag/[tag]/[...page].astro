@@ -1,5 +1,5 @@
 ---
-import { LANGS, t, l } from "#/i18n";
+import { LANGS, useTranslate, l } from "#/i18n";
 import BaseLayout from "#/layouts/BaseLayout.astro";
 import PostCard from "#/components/PostCard.astro";
 import Pagination from "#/components/Pagination.astro";
@@ -27,6 +27,7 @@ export async function getStaticPaths() {
 
 const pageSize = 10;
 const lang = Astro.params.lang as string;
+const t = useTranslate(lang);
 const tag = Astro.params.tag as string;
 const currentPage = (() => {
   const p = Astro.params.page;
@@ -45,15 +46,15 @@ const pagePosts = posts.slice(
 
 <BaseLayout
   lang={lang}
-  title={`${tag} | ${t(lang, "tag_title")}`}
+  title={`${tag} | ${t("tag_title")}`}
   current="tags"
 >
   <header class="hero">
     <p class="eyebrow">
-      <a href={l(lang, "/tag")}>← {t(lang, "tag_title")}</a>
+      <a href={l(lang, "/tag")}>← {t("tag_title")}</a>
     </p>
     <h1>#{tag}</h1>
-    <p>{t(lang, "tag_count", { count: posts.length })}</p>
+    <p>{t("tag_count", { count: posts.length })}</p>
   </header>
 
   <section class="post-list">
@@ -71,7 +72,7 @@ const pagePosts = posts.slice(
           />
         </>
       ) : (
-        <p class="meta">{t(lang, "not_found")}</p>
+        <p class="meta">{t("not_found")}</p>
       )
     }
   </section>

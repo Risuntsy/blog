@@ -1,5 +1,5 @@
 ---
-import { t } from "#/i18n";
+import { useTranslate } from "#/i18n";
 import Header from "#/components/Header.astro";
 import Footer from "#/components/Footer.astro";
 import fusionPixelFontUrl from "#/assets/fonts/fusion-pixel/fusion-pixel-12px-monospaced-zh_hans.otf.woff2?url";
@@ -14,10 +14,11 @@ interface Props {
 }
 
 const { lang, title, description, current = "", isHome = false } = Astro.props;
+const t = useTranslate(lang);
 const pageTitle = title
-  ? `${title} | ${t(lang, "site_title")}`
-  : t(lang, "site_title");
-const desc = description || t(lang, "site_description");
+  ? `${title} | ${t("site_title")}`
+  : t("site_title");
+const desc = description || t("site_description");
 ---
 
 <!doctype html>
@@ -37,7 +38,7 @@ const desc = description || t(lang, "site_description");
     <link
       rel="alternate"
       type="application/rss+xml"
-      title={t(lang, "site_title")}
+      title={t("site_title")}
       href={`/${lang}/rss.xml`}
     />
     <title>{pageTitle}</title>

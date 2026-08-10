@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { t, fmtDate, l } from "#/i18n";
+import { useTranslate, fmtDate, l } from "#/i18n";
 import { postSlug, postLang } from "#/utils";
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
 
 const { post } = Astro.props;
 const lang = postLang(post);
+const t = useTranslate(lang);
 const slug = postSlug(post);
 const dateStr = fmtDate(lang, post.data.created_at);
 const href = l(lang, `/post/${slug}`);
@@ -42,6 +43,6 @@ const preview = post.data.description || (bodyText ? `${bodyText}…` : "");
     )
   }
   <p class="card-more">
-    <a href={href}>{t(lang, "read_more")} →</a>
+    <a href={href}>{t("read_more")} →</a>
   </p>
 </article>

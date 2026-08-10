@@ -1,23 +1,24 @@
 ---
-import { t } from "#/i18n";
+import { useTranslate } from "#/i18n";
 
 interface Props {
   lang: string;
 }
 
 const { lang } = Astro.props;
-const [poweredBefore, poweredAfter] = t(lang, "footer_powered").split(
+const t = useTranslate(lang);
+const [poweredBefore, poweredAfter] = t("footer_powered").split(
   "${astro}",
 );
-const [themeBefore, themeAfter] = t(lang, "footer_theme").split("${pixl}");
+const [themeBefore, themeAfter] = t("footer_theme").split("${pixl}");
 ---
 
 <footer class="footer">
   <div class="container">
-    {t(lang, "site_title")}
+    {t("site_title")}
     ·
     <a href="https://github.com/Risuntsy/blog" target="_blank" rel="noopener"
-      >{t(lang, "footer_source")}</a
+      >{t("footer_source")}</a
     >
     ·
     {poweredBefore}<a

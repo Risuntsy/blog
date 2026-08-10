@@ -1,5 +1,5 @@
 ---
-import { t, l, LANGS } from "#/i18n";
+import { useTranslate, l, LANGS } from "#/i18n";
 
 interface Props {
   lang: string;
@@ -8,12 +8,13 @@ interface Props {
 }
 
 const { lang, current = "", isHome = false } = Astro.props;
+const t = useTranslate(lang);
 
 const links = [
-  { key: "posts", href: "", label: t(lang, "nav_posts") },
-  { key: "tags", href: "/tag", label: t(lang, "nav_tags") },
-  { key: "archive", href: "/archive", label: t(lang, "nav_archive") },
-  { key: "about", href: "/about", label: t(lang, "nav_about") },
+  { key: "posts", href: "", label: t("nav_posts") },
+  { key: "tags", href: "/tag", label: t("nav_tags") },
+  { key: "archive", href: "/archive", label: t("nav_archive") },
+  { key: "about", href: "/about", label: t("nav_about") },
 ];
 ---
 
@@ -22,10 +23,10 @@ const links = [
     <div class="nav-inner">
       {
         isHome ? (
-          <span class="site-title">{t(lang, "site_title")}</span>
+          <span class="site-title">{t("site_title")}</span>
         ) : (
           <a href={l(lang, "/")} class="site-title">
-            {t(lang, "site_title")}
+            {t("site_title")}
           </a>
         )
       }
@@ -46,9 +47,9 @@ const links = [
       </div>
       <div class="nav-tools">
         <select data-theme class="ctrl" aria-label="theme">
-          <option value="dark">{t(lang, "theme_dark")}</option>
-          <option value="light">{t(lang, "theme_light")}</option>
-          <option value="auto">{t(lang, "theme_auto")}</option>
+          <option value="dark">{t("theme_dark")}</option>
+          <option value="light">{t("theme_light")}</option>
+          <option value="auto">{t("theme_auto")}</option>
         </select>
         <select data-language class="ctrl" aria-label="language">
           {

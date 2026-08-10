@@ -1,5 +1,5 @@
 ---
-import { l, t } from "#/i18n";
+import { l, useTranslate } from "#/i18n";
 
 interface Props {
   lang: string;
@@ -7,6 +7,7 @@ interface Props {
 }
 
 const { lang, tags } = Astro.props;
+const t = useTranslate(lang);
 const max = Math.max(1, ...tags.map((x) => x.count));
 ---
 
@@ -19,7 +20,7 @@ const max = Math.max(1, ...tags.map((x) => x.count));
           class="tag"
           href={l(lang, `/tag/${name}`)}
           style={`font-size: ${scale}rem`}
-          title={t(lang, "tag_count", { count })}
+          title={t("tag_count", { count })}
         >
           #{name}
         </a>

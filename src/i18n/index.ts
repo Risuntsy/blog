@@ -6,15 +6,17 @@ export type Lang = (typeof LANGS)[number];
 
 const dicts: Record<string, Record<string, string>> = { en, "zh-cn": zh_cn };
 
-export function t(locale: string, key: string, params?: Record<string, string | number>): string {
+export function useTranslate(locale: string) {
   const dict = dicts[locale] || dicts["en"];
-  let template = dict[key] || dicts["en"][key] || key;
-  if (params) {
-    for (const [k, v] of Object.entries(params)) {
-      template = template.replaceAll(`\${${k}}`, String(v));
+  return (key: string, params?: Record<string, string | number>): string => {
+    let template = dict[key] || dicts["en"][key] || key;
+    if (params) {
+      for (const [k, v] of Object.entries(params)) {
+        template = template.replaceAll(`\${${k}}`, String(v));
+      }
     }
-  }
-  return template;
+    return template;
+  };
 }
 
 /** Build locale-aware URL: /en/path or /zh-cn/path */
@@ -34,11 +36,12 @@ export function fmtDate(locale: string, date: Date, opts?: Intl.DateTimeFormatOp
 
 /** Embeddable client-side search strings */
 export function searchStrings(locale: string) {
+  const t = useTranslate(locale);
   return {
-    placeholder: t(locale, "search_placeholder"),
-    no_results: t(locale, "search_no_results"),
-    not_available: t(locale, "search_not_available"),
-    untitled: t(locale, "post_untitled"),
-    btn: t(locale, "nav_search"),
+    placeholder: t("search_placeholder"),
+    no_results: t("search_no_results"),
+    not_available: t("search_not_available"),
+    untitled: t("post_untitled"),
+    btn: t("nav_search"),
   };
 }
