@@ -71,6 +71,36 @@ function copyableInlineCode() {
   };
 }
 
+function removeDuplicateTitle() {
+  return (/** @type {any} */ tree, /** @type {any} */ file) => {
+    const children = tree?.children;
+    if (!Array.isArray(children)) return;
+
+    const firstContentIndex = children.findIndex(
+      (/** @type {any} */ node) =>
+        node?.type !== "text" || String(node.value ?? "").trim() !== "",
+    );
+    const heading = children[firstContentIndex];
+    const title = file.data.astro?.frontmatter?.title;
+    if (heading?.type !== "element" || heading.tagName !== "h1") return;
+    if (typeof title !== "string") return;
+
+    let headingText = "";
+    function collectText(/** @type {any} */ node) {
+      if (node?.type === "text") headingText += node.value;
+      node?.children?.forEach(collectText);
+    }
+    collectText(heading);
+
+    const normalize = (/** @type {string} */ value) =>
+      value.normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase();
+
+    if (normalize(headingText) === normalize(title)) {
+      children.splice(firstContentIndex, 1);
+    }
+  };
+}
+
 /** @param {string} page */
 function isTranslatedTagAlias(page) {
   const { pathname } = new URL(page);
@@ -98,7 +128,13 @@ export default defineConfig({
     sitemap({ filter: (page) => !isTranslatedTagAlias(page) }),
   ],
   markdown: {
-    processor: unified({ rehypePlugins: [externalLinks, copyableInlineCode] }),
+    processor: unified({
+      rehypePlugins: [
+        removeDuplicateTitle,
+        externalLinks,
+        copyableInlineCode,
+      ],
+    }),
   },
   vite: {
     plugins: [tailwindcss()],
