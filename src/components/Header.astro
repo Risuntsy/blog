@@ -1,5 +1,5 @@
 ---
-import { useTranslate, l, LANGS } from "#/i18n";
+import { useTranslate, l, LANGS, languagePath } from "#/i18n";
 
 interface Props {
   lang: string;
@@ -9,6 +9,9 @@ interface Props {
 
 const { lang, current = "", isHome = false } = Astro.props;
 const t = useTranslate(lang);
+const languagePaths = Object.fromEntries(
+  LANGS.map((code) => [code, languagePath(Astro.url.pathname, code)]),
+);
 
 const links = [
   { key: "posts", href: "", label: t("nav_posts") },
@@ -54,7 +57,7 @@ const links = [
         <select data-language class="ctrl" aria-label="language">
           {
             LANGS.map((code) => (
-              <option value={code} selected={code === lang}>
+              <option value={languagePaths[code]} selected={code === lang}>
                 {code === "zh-cn" ? "中文" : "EN"}
               </option>
             ))
@@ -92,12 +95,9 @@ const links = [
 
     private onLanguageChange = () => {
       if (!this.languageSelect) return;
-      const url = new URL(location.href);
-      url.pathname = url.pathname.replace(
-        /^\/(en|zh-cn)/,
-        `/${this.languageSelect.value}`,
+      location.assign(
+        `${this.languageSelect.value}${location.search}${location.hash}`,
       );
-      location.assign(url);
     };
 
     connectedCallback() {

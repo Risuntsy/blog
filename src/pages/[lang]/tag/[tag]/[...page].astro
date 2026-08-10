@@ -1,5 +1,5 @@
 ---
-import { LANGS, useTranslate, l } from "#/i18n";
+import { LANGS, TAG_TRANSLATIONS, useTranslate, l } from "#/i18n";
 import BaseLayout from "#/layouts/BaseLayout.astro";
 import PostCard from "#/components/PostCard.astro";
 import Pagination from "#/components/Pagination.astro";
@@ -7,8 +7,10 @@ import { getPosts } from "#/utils";
 
 export async function getStaticPaths() {
   const pageSize = 10;
-  const paths: Array<{ params: { lang: string; tag: string; page?: string } }> =
-    [];
+  const paths: Array<{
+    params: { lang: string; tag: string; page?: string };
+    props: { tag: string };
+  }> = [];
   for (const lang of LANGS) {
     const langPosts = await getPosts(lang);
     const tags = [...new Set(langPosts.flatMap((p) => p.data.tags))];
@@ -16,9 +18,22 @@ export async function getStaticPaths() {
       const count = langPosts.filter((p) => p.data.tags.includes(tag)).length;
       if (count === 0) continue;
       const totalPages = Math.ceil(count / pageSize);
-      paths.push({ params: { lang, tag } });
-      for (let i = 2; i <= totalPages; i++) {
-        paths.push({ params: { lang, tag, page: `page/${i}` } });
+      const translation = TAG_TRANSLATIONS.find(
+        (entry) => entry[lang] === tag,
+      );
+      const routeTags = new Set([
+        tag,
+        ...(translation ? LANGS.map((code) => translation[code]) : []),
+      ]);
+
+      for (const routeTag of routeTags) {
+        paths.push({ params: { lang, tag: routeTag }, props: { tag } });
+        for (let i = 2; i <= totalPages; i++) {
+          paths.push({
+            params: { lang, tag: routeTag, page: `page/${i}` },
+            props: { tag },
+          });
+        }
       }
     }
   }
@@ -28,7 +43,7 @@ export async function getStaticPaths() {
 const pageSize = 10;
 const lang = Astro.params.lang as string;
 const t = useTranslate(lang);
-const tag = Astro.params.tag as string;
+const tag = Astro.props.tag as string;
 const currentPage = (() => {
   const p = Astro.params.page;
   if (!p) return 1;

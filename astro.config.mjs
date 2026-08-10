@@ -4,6 +4,7 @@ import { unified } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
+import { TAG_TRANSLATIONS } from "./src/i18n/tags.ts";
 
 const siteUrl = new URL("https://blog.risun.icu");
 
@@ -70,13 +71,32 @@ function copyableInlineCode() {
   };
 }
 
+/** @param {string} page */
+function isTranslatedTagAlias(page) {
+  const { pathname } = new URL(page);
+  const match = pathname.match(/^\/(en|zh-cn)\/tag\/([^/]+)\/?$/);
+  if (!match) return false;
+
+  const [, lang, encodedTag] = match;
+  const tag = decodeURIComponent(encodedTag);
+  return TAG_TRANSLATIONS.some((entry) => {
+    const localTag = lang === "en" ? entry.en : entry["zh-cn"];
+    return (
+      localTag !== tag && (entry.en === tag || entry["zh-cn"] === tag)
+    );
+  });
+}
+
 export default defineConfig({
   site: siteUrl.href,
   prefetch: {
     prefetchAll: true,
     defaultStrategy: "hover",
   },
-  integrations: [mdx(), sitemap()],
+  integrations: [
+    mdx(),
+    sitemap({ filter: (page) => !isTranslatedTagAlias(page) }),
+  ],
   markdown: {
     processor: unified({ rehypePlugins: [externalLinks, copyableInlineCode] }),
   },

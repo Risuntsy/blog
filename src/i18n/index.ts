@@ -1,5 +1,8 @@
 import en from "./en.json";
 import zh_cn from "./zh-cn.json";
+import { localizedTag } from "./tags";
+
+export { TAG_TRANSLATIONS, localizedTag } from "./tags";
 
 export const LANGS = ["en", "zh-cn"] as const;
 export type Lang = (typeof LANGS)[number];
@@ -24,6 +27,29 @@ export function l(locale: string, path: string): string {
   const prefix = locale === "en" ? "/en" : "/zh-cn";
   if (!path || path === "/") return prefix;
   return prefix + (path.startsWith("/") ? path : "/" + path);
+}
+
+/** Build the equivalent path when switching languages. */
+export function languagePath(pathname: string, locale: Lang): string {
+  const tagRoute = pathname.match(
+    /^\/(?:en|zh-cn)\/tag\/([^/]+)(\/.*)?$/,
+  );
+
+  if (tagRoute) {
+    let tag = tagRoute[1];
+    try {
+      tag = decodeURIComponent(tag);
+    } catch {
+      // Keep a malformed-but-usable segment unchanged.
+    }
+    return `/${locale}/tag/${encodeURIComponent(localizedTag(tag, locale))}${tagRoute[2] ?? ""}`;
+  }
+
+  if (/^\/(?:en|zh-cn)(?:\/|$)/.test(pathname)) {
+    return pathname.replace(/^\/(?:en|zh-cn)/, `/${locale}`);
+  }
+
+  return `/${locale}`;
 }
 
 /** Format date for the given locale */
