@@ -14,6 +14,7 @@ export async function getStaticPaths() {
   for (const lang of LANGS) {
     const langPosts = await getPosts(lang);
     const tags = [...new Set(langPosts.flatMap((p) => p.data.tags))];
+    const seenRouteTags = new Set<string>();
     for (const tag of tags) {
       const count = langPosts.filter((p) => p.data.tags.includes(tag)).length;
       if (count === 0) continue;
@@ -27,6 +28,10 @@ export async function getStaticPaths() {
       ]);
 
       for (const routeTag of routeTags) {
+        // A literal tag can collide with another tag's translated alias;
+        // first one registered for this {lang, routeTag} wins.
+        if (seenRouteTags.has(routeTag)) continue;
+        seenRouteTags.add(routeTag);
         paths.push({ params: { lang, tag: routeTag }, props: { tag } });
         for (let i = 2; i <= totalPages; i++) {
           paths.push({

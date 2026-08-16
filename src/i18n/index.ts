@@ -1,6 +1,6 @@
 import en from "./en.json";
 import zh_cn from "./zh-cn.json";
-import { localizedTag } from "./tags";
+import { TAG_TRANSLATIONS, localizedTag } from "./tags";
 
 export { TAG_TRANSLATIONS, localizedTag } from "./tags";
 
@@ -46,6 +46,12 @@ export function languagePath(pathname: string, locale: Lang): string {
     } catch {
       // Keep a malformed-but-usable segment unchanged.
     }
+    const hasTranslation = TAG_TRANSLATIONS.some(
+      (entry) => entry.en === tag || entry["zh-cn"] === tag,
+    );
+    // Untranslated tags have no generated route in the other locale — send
+    // the switcher to the tag index instead of a link that would 404.
+    if (!hasTranslation) return `/${locale}/tag`;
     return `/${locale}/tag/${encodeURIComponent(localizedTag(tag, locale))}${tagRoute[2] ?? ""}`;
   }
 

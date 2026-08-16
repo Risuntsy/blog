@@ -64,7 +64,15 @@ function removeDuplicateTitle() {
     collectText(heading);
 
     const normalize = (/** @type {string} */ value) =>
-      value.normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase();
+      value
+        .normalize("NFKC")
+        // remark-smartypants curls quotes in rendered content but not in
+        // frontmatter, so unify both to straight quotes before comparing.
+        .replace(/[‘’]/g, "'")
+        .replace(/[“”]/g, '"')
+        .trim()
+        .replace(/\s+/g, " ")
+        .toLocaleLowerCase();
 
     if (normalize(headingText) === normalize(title)) {
       children.splice(firstContentIndex, 1);
