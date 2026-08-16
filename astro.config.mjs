@@ -42,35 +42,6 @@ function externalLinks() {
   };
 }
 
-function copyableInlineCode() {
-  return (/** @type {any} */ tree) => {
-    /** @param {any} node @param {any} parent */
-    function visit(node, parent) {
-      if (
-        node?.type === "element" &&
-        node.tagName === "code" &&
-        parent?.tagName !== "pre"
-      ) {
-        const properties = node.properties || (node.properties = {});
-        const text = node.children
-          ?.filter((/** @type {any} */ child) => child.type === "text")
-          .map((/** @type {any} */ child) => child.value)
-          .join("") ?? "";
-
-        properties["data-copy-inline"] = "";
-        properties.tabIndex = 0;
-        properties.role = "button";
-        properties.title = "Copy";
-        properties.ariaLabel = `Copy ${text}`;
-      }
-
-      node?.children?.forEach((/** @type {any} */ child) => visit(child, node));
-    }
-
-    visit(tree, undefined);
-  };
-}
-
 function removeDuplicateTitle() {
   return (/** @type {any} */ tree, /** @type {any} */ file) => {
     const children = tree?.children;
@@ -132,7 +103,6 @@ export default defineConfig({
       rehypePlugins: [
         removeDuplicateTitle,
         externalLinks,
-        copyableInlineCode,
       ],
     }),
   },

@@ -3,6 +3,9 @@ dist/
 # generated types
 .astro/
 
+# archived old blog versions
+.archive/
+
 # dependencies
 node_modules/
 

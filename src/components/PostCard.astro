@@ -1,18 +1,19 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { useTranslate, fmtDate, l } from "#/i18n";
+import { useTranslate, fmtDate, tagHref } from "#/i18n";
 import { postSlug, postLang } from "#/utils";
 
 interface Props {
   post: CollectionEntry<"post">;
+  currentTag?: string;
 }
 
-const { post } = Astro.props;
+const { post, currentTag } = Astro.props;
 const lang = postLang(post);
 const t = useTranslate(lang);
 const slug = postSlug(post);
 const dateStr = fmtDate(lang, post.data.created_at);
-const href = l(lang, `/post/${slug}`);
+const href = `/${lang}/post/${slug}`;
 
 const bodyText = post.body
   ?.replace(/^#+ .*/gm, "")
@@ -33,12 +34,18 @@ const preview = post.data.description || (bodyText ? `${bodyText}…` : "");
   {
     (post.data.pinned || post.data.tags.length > 0) && (
       <div class="tags">
-        {post.data.pinned && <span class="tag pinned">Pinned</span>}
-        {post.data.tags.map((tag) => (
-          <a class="tag" href={l(lang, `/tag/${tag}`)}>
-            #{tag}
-          </a>
-        ))}
+        {post.data.pinned && <span class="tag pinned">{t("pinned")}</span>}
+        {post.data.tags.map((tag) =>
+          tag === currentTag ? (
+            <span class="tag" aria-current="page">
+              #{tag}
+            </span>
+          ) : (
+            <a class="tag" href={tagHref(lang, tag)}>
+              #{tag}
+            </a>
+          ),
+        )}
       </div>
     )
   }

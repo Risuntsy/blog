@@ -2,16 +2,18 @@
 import BaseLayout from "#/layouts/BaseLayout.astro";
 import { useTranslate } from "#/i18n";
 
-const lang = "en";
-const t = useTranslate(lang);
+const en = useTranslate("en");
+const zh = useTranslate("zh-cn");
 ---
 
-<BaseLayout lang={lang} title={t("not_found")}>
+<BaseLayout lang="en" title={`${en("not_found")} / ${zh("not_found")}`}>
   <header class="hero" style="text-align:center">
     <p class="eyebrow">404</p>
-    <h1>{t("not_found")}</h1>
-    <div class="center" style="margin-top:1.5rem">
-      <a class="btn" href={`/${lang}/`}>{t("back_home")}</a>
+    <h1>{en("not_found")}</h1>
+    <p>{zh("not_found")}</p>
+    <div class="center not-found-actions">
+      <a class="btn" href="/en/">{en("back_home")}</a>
+      <a class="btn" href="/zh-cn/">{zh("back_home")}</a>
     </div>
   </header>
 </BaseLayout>

@@ -22,12 +22,14 @@ const titleId = `search-title-${lang}`;
     class="nav-icon"
     type="button"
     data-open-search
+    aria-expanded="false"
+    aria-haspopup="dialog"
     aria-label={strings.btn}
     title={strings.btn}
   >
-    <svg viewBox="0 0 16 16" aria-hidden="true">
-      <path d="M2 2h8v2h2v6h-2v2H8v-2h2V4H4v6h4v2H2z"></path>
-      <path d="m10 10 4 4-1 1-4-4z"></path>
+    <svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges">
+      <path class="search-lens" d="M1 1h8v1h1v8H9v1H1V9H0V1h1zm1 1v7h7V2H2z"></path>
+      <path class="search-handle" d="M10 10h2v1h1v1h1v1h1v2h-2v-1h-1v-1h-1v-1h-1z"></path>
     </svg>
   </button>
 
@@ -98,8 +100,15 @@ const titleId = `search-title-${lang}`;
     private searchId = 0;
     private debounceId?: number;
 
+    private syncOpen = () => {
+      const open = Boolean(this.dialog?.open);
+      this.classList.toggle("is-open", open);
+      this.openButton?.setAttribute("aria-expanded", String(open));
+    };
+
     private onOpen = () => {
       if (!this.dialog?.open) this.dialog?.showModal();
+      this.syncOpen();
       requestAnimationFrame(() => this.input?.focus({ preventScroll: true }));
     };
 
@@ -132,14 +141,17 @@ const titleId = `search-title-${lang}`;
       this.openButton?.addEventListener("click", this.onOpen);
       this.closeButton?.addEventListener("click", this.onClose);
       this.dialog?.addEventListener("click", this.onBackdropClick);
+      this.dialog?.addEventListener("close", this.syncOpen);
       this.form?.addEventListener("submit", this.onSubmit);
       this.input?.addEventListener("input", this.onInput);
+      this.syncOpen();
     }
 
     disconnectedCallback() {
       this.openButton?.removeEventListener("click", this.onOpen);
       this.closeButton?.removeEventListener("click", this.onClose);
       this.dialog?.removeEventListener("click", this.onBackdropClick);
+      this.dialog?.removeEventListener("close", this.syncOpen);
       this.form?.removeEventListener("submit", this.onSubmit);
       this.input?.removeEventListener("input", this.onInput);
       window.clearTimeout(this.debounceId);
@@ -187,10 +199,10 @@ const titleId = `search-title-${lang}`;
 
         for (const result of matches) {
           const item = document.createElement("li");
-          item.className = "search-result card";
+          item.className = "search-result";
 
           const title = document.createElement("h3");
-          title.className = "card-title";
+          title.className = "search-result-title";
           const link = document.createElement("a");
           link.href = result.url;
           link.textContent = result.meta?.title || this.dataset.untitled || "";

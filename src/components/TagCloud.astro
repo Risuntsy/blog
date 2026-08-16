@@ -1,5 +1,5 @@
 ---
-import { l, useTranslate } from "#/i18n";
+import { tagHref, useTranslate } from "#/i18n";
 
 interface Props {
   lang: string;
@@ -18,7 +18,7 @@ const max = Math.max(1, ...tags.map((x) => x.count));
       return (
         <a
           class="tag"
-          href={l(lang, `/tag/${name}`)}
+          href={tagHref(lang, name)}
           style={`font-size: ${scale}rem`}
           title={t("tag_count", { count })}
         >

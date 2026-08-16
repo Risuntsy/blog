@@ -1,28 +1,28 @@
 ---
 import { getCollection, render } from "astro:content";
-import { LANGS, useTranslate, fmtDate, l } from "#/i18n";
+import { LANGS, useTranslate, fmtDate, tagHref } from "#/i18n";
 import BaseLayout from "#/layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("post", ({ data }) => !data.draft);
-  const slugs = [
-    ...new Set(posts.map((p) => p.id.replace(/^(en|zh-cn)\//, ""))),
-  ];
-  return LANGS.flatMap((lang) =>
-    slugs.map((slug) => ({ params: { lang, slug } })),
-  );
+  return posts.map((post) => {
+    const lang = post.id.split("/")[0] ?? "en";
+    const slug = post.id.replace(/^(en|zh-cn)\//, "");
+    return { params: { lang, slug }, props: { post } };
+  });
 }
 
 const lang = Astro.params.lang as string;
 const t = useTranslate(lang);
 const slug = Astro.params.slug as string;
+const { post } = Astro.props;
 
-const allPosts = await getCollection("post");
-const post = allPosts.find((p) => !p.data.draft && p.id === `${lang}/${slug}`);
-
-if (!post) {
-  return Astro.redirect(`/${lang}`);
-}
+const siblings = await getCollection("post", ({ data }) => !data.draft);
+const languagePaths = Object.fromEntries(
+  LANGS.filter((code) => siblings.some((item) => item.id === `${code}/${slug}`)).map(
+    (code) => [code, `/${code}/post/${slug}`],
+  ),
+);
 
 const { Content } = await render(post);
 const dateStr = fmtDate(lang, post.data.created_at);
@@ -35,7 +35,7 @@ const updatedStr = post.data.updated_at
   lang={lang}
   title={post.data.title}
   description={post.data.description}
-  current="posts"
+  languagePaths={languagePaths}
 >
   <article class="article" data-pagefind-body>
     <p class="meta">
@@ -51,7 +51,7 @@ const updatedStr = post.data.updated_at
       post.data.tags.length > 0 && (
         <div class="tags">
           {post.data.tags.map((tag) => (
-            <a class="tag" href={l(lang, `/tag/${tag}`)}>
+            <a class="tag" href={tagHref(lang, tag)}>
               #{tag}
             </a>
           ))}

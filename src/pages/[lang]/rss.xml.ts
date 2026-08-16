@@ -6,7 +6,13 @@ export async function getStaticPaths() {
   return LANGS.map((lang) => ({ params: { lang } }));
 }
 
-export async function GET({ params }: { params: { lang: string } }) {
+export async function GET({
+  params,
+  site,
+}: {
+  params: { lang: string };
+  site?: URL;
+}) {
   const lang = params.lang;
   const posts = await getCollection("post", ({ data }) => !data.draft);
   const sorted = posts
@@ -18,7 +24,7 @@ export async function GET({ params }: { params: { lang: string } }) {
   return rss({
     title: `Risun's Blog (${lang})`,
     description: `personal blog - ${lang}`,
-    site: "https://blog.risun.icu",
+    site: site ?? "https://blog.risun.icu",
     customData: `<language>${lang}</language>`,
     items: sorted.map((post) => {
       const slug = post.id.replace(new RegExp(`^${lang}/`), "");

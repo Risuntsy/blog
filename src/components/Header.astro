@@ -6,18 +6,23 @@ import FeedPicker from "#/components/FeedPicker.astro";
 interface Props {
   lang: string;
   current?: string;
+  languagePaths?: Record<string, string>;
 }
 
-const { lang, current = "" } = Astro.props;
+const { lang, current = "", languagePaths: languagePathOverrides } = Astro.props;
 const t = useTranslate(lang);
-const languagePaths = Object.fromEntries(
-  LANGS.map((code) => [code, languagePath(Astro.url.pathname, code)]),
-);
+const languagePaths =
+  languagePathOverrides ??
+  Object.fromEntries(
+    LANGS.map((code) => [code, languagePath(Astro.url.pathname, code)]),
+  );
+const languageCodes = LANGS.filter((code) => languagePaths[code]);
 
 const links = [
   { key: "posts", href: "", label: t("nav_posts") },
   { key: "tags", href: "/tag", label: t("nav_tags") },
   { key: "archive", href: "/archive", label: t("nav_archive") },
+  { key: "about", href: "/about", label: t("nav_about") },
 ];
 ---
 
@@ -40,16 +45,18 @@ const links = [
         }
       </div>
       <div class="nav-tools">
-        <select data-language class="ctrl" aria-label="language">
-          {
-            LANGS.map((code) => (
-              <option value={languagePaths[code]} selected={code === lang}>
-                {code === "zh-cn" ? "中文" : "EN"}
-              </option>
-            ))
-          }
-        </select>
-        <select data-theme class="ctrl" aria-label="theme">
+        {
+          languageCodes.length > 1 && (
+            <select data-language class="ctrl" aria-label={t("nav_language")}>
+              {languageCodes.map((code) => (
+                <option value={languagePaths[code]} selected={code === lang}>
+                  {code === "zh-cn" ? "中文" : "EN"}
+                </option>
+              ))}
+            </select>
+          )
+        }
+        <select data-theme class="ctrl" aria-label={t("nav_theme")}>
           <option value="dark">{t("theme_dark")}</option>
           <option value="light">{t("theme_light")}</option>
           <option value="auto">{t("theme_auto")}</option>

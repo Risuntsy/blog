@@ -23,13 +23,15 @@ const feeds = [
     class="nav-icon"
     type="button"
     data-open-feed
+    aria-expanded="false"
+    aria-haspopup="dialog"
     aria-label={t("nav_feed")}
     title={t("nav_feed")}
   >
-    <svg viewBox="0 0 16 16" aria-hidden="true">
-      <path d="M2 2v2c5.5 0 10 4.5 10 10h2C14 7.4 8.6 2 2 2z"></path>
-      <path d="M2 7v2c2.8 0 5 2.2 5 5h2c0-3.9-3.1-7-7-7z"></path>
-      <path d="M2 12h2v2H2z"></path>
+    <svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges">
+      <path class="rss-dot" d="M2 11h3v3H2z"></path>
+      <path class="rss-wave rss-wave-1" d="M2 7h2v1h1v1h1v1h1v1h1v2H7v-1H6v-1H5v-1H4V9H2z"></path>
+      <path class="rss-wave rss-wave-2" d="M2 2h2v1h2v1h2v1h1v1h1v1h1v1h1v1h1v2h-2v-1h-1V9h-1V8H9V7H8V6H6V5H4V4H2z"></path>
     </svg>
   </button>
 
@@ -54,10 +56,24 @@ const feeds = [
     <div class="feed-options">
       {
         feeds.map(({ href, label }) => (
-          <button class="feed-option" type="button" data-feed-url={href.href}>
-            <span>{label}</span>
-            <small>{href.pathname}</small>
-          </button>
+          <div class="feed-option">
+            <a href={href.href} target="_blank" rel="noopener noreferrer">
+              <span>{label}</span>
+              <small>{href.pathname}</small>
+            </a>
+            <button
+              class="feed-copy"
+              type="button"
+              data-feed-url={href.href}
+              aria-label={t("copy_link")}
+              title={t("copy_link")}
+            >
+              <svg viewBox="0 0 12 12" aria-hidden="true" shape-rendering="crispEdges">
+                <rect x="3" y="0" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1"></rect>
+                <rect class="sheet" x="0" y="3" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1"></rect>
+              </svg>
+            </button>
+          </div>
         ))
       }
     </div>
@@ -80,8 +96,15 @@ const feeds = [
       "[data-feed-status]",
     );
 
+    private syncOpen = () => {
+      const open = Boolean(this.dialog?.open);
+      this.classList.toggle("is-open", open);
+      this.openButton?.setAttribute("aria-expanded", String(open));
+    };
+
     private onOpen = () => {
       if (!this.dialog?.open) this.dialog?.showModal();
+      this.syncOpen();
     };
 
     private onClose = () => this.dialog?.close();
@@ -109,15 +132,18 @@ const feeds = [
       this.openButton?.addEventListener("click", this.onOpen);
       this.closeButton?.addEventListener("click", this.onClose);
       this.dialog?.addEventListener("click", this.onBackdropClick);
+      this.dialog?.addEventListener("close", this.syncOpen);
       this.options.forEach((option) =>
         option.addEventListener("click", this.onSelect),
       );
+      this.syncOpen();
     }
 
     disconnectedCallback() {
       this.openButton?.removeEventListener("click", this.onOpen);
       this.closeButton?.removeEventListener("click", this.onClose);
       this.dialog?.removeEventListener("click", this.onBackdropClick);
+      this.dialog?.removeEventListener("close", this.syncOpen);
       this.options.forEach((option) =>
         option.removeEventListener("click", this.onSelect),
       );
@@ -142,7 +168,6 @@ const feeds = [
           await navigator.clipboard.writeText(text);
           return;
         } catch {
-          // Fall through for browsers that deny the async clipboard API.
         }
       }
 

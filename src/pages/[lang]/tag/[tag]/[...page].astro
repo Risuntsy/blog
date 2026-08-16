@@ -1,5 +1,5 @@
 ---
-import { LANGS, TAG_TRANSLATIONS, useTranslate, l } from "#/i18n";
+import { LANGS, TAG_TRANSLATIONS, useTranslate, l, tagHref } from "#/i18n";
 import BaseLayout from "#/layouts/BaseLayout.astro";
 import PostCard from "#/components/PostCard.astro";
 import Pagination from "#/components/Pagination.astro";
@@ -59,11 +59,7 @@ const pagePosts = posts.slice(
 );
 ---
 
-<BaseLayout
-  lang={lang}
-  title={`${tag} | ${t("tag_title")}`}
-  current="tags"
->
+<BaseLayout lang={lang} title={`${tag} | ${t("tag_title")}`}>
   <header class="hero">
     <p class="eyebrow">
       <a href={l(lang, "/tag")}>← {t("tag_title")}</a>
@@ -77,13 +73,13 @@ const pagePosts = posts.slice(
       pagePosts.length > 0 ? (
         <>
           {pagePosts.map((post) => (
-            <PostCard post={post} />
+            <PostCard post={post} currentTag={tag} />
           ))}
           <Pagination
             lang={lang}
             currentPage={currentPage}
             lastPage={totalPages}
-            basePath={`/${lang}/tag/${tag}`}
+            basePath={tagHref(lang, tag)}
           />
         </>
       ) : (

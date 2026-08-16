@@ -10,9 +10,10 @@ interface Props {
   title?: string;
   description?: string;
   current?: string;
+  languagePaths?: Record<string, string>;
 }
 
-const { lang, title, description, current = "" } = Astro.props;
+const { lang, title, description, current = "", languagePaths } = Astro.props;
 const t = useTranslate(lang);
 const pageTitle = title
   ? `${title} | ${t("site_title")}`
@@ -55,7 +56,7 @@ const desc = description || t("site_description");
   </head>
   <body>
     <div class="container">
-      <Header lang={lang} current={current} />
+      <Header lang={lang} current={current} languagePaths={languagePaths} />
       <copy-region>
         <main>
           <slot />
@@ -69,9 +70,7 @@ const desc = description || t("site_description");
           const target = event.target;
           if (!(target instanceof Element)) return;
 
-          const trigger = target.closest<HTMLElement>(
-            "[data-copy], [data-copy-inline]",
-          );
+          const trigger = target.closest<HTMLElement>("[data-copy]");
           if (!trigger || !this.contains(trigger)) return;
           if (
             event instanceof KeyboardEvent &&
@@ -95,10 +94,9 @@ const desc = description || t("site_description");
         }
 
         private async copy(trigger: HTMLElement) {
-          const text = trigger.hasAttribute("data-copy-inline")
-            ? trigger.textContent ?? ""
-            : trigger.closest(".code-window")?.querySelector("pre")
-                ?.textContent ?? "";
+          const text =
+            trigger.closest(".code-window")?.querySelector("pre")
+              ?.textContent ?? "";
           const label = trigger.getAttribute("aria-label") ?? "Copy";
 
           try {

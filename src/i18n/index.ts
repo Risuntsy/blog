@@ -29,6 +29,10 @@ export function l(locale: string, path: string): string {
   return prefix + (path.startsWith("/") ? path : "/" + path);
 }
 
+export function tagHref(locale: string, tag: string): string {
+  return l(locale, `/tag/${encodeURIComponent(tag)}`);
+}
+
 /** Build the equivalent path when switching languages. */
 export function languagePath(pathname: string, locale: Lang): string {
   const tagRoute = pathname.match(

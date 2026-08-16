@@ -171,7 +171,7 @@ copy-region {
 .container {
   max-width: var(--content);
   margin: 0 auto;
-  padding: 1.25rem 1.25rem 0;
+  padding: 0.85rem 1rem 0;
 }
 
 main {
@@ -217,7 +217,7 @@ select.ctrl {
 .nav {
   margin: 0 0 var(--space-block);
   position: sticky;
-  top: 0.65rem;
+  top: 0.45rem;
   z-index: 20;
 }
 
@@ -226,25 +226,25 @@ select.ctrl {
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 0.55rem 1rem;
+  gap: 0.35rem 0.7rem;
   background-color: var(--surface);
   border: 2px solid var(--primary);
   box-shadow: var(--shadow-pixel);
-  padding: 0.55rem 0.8rem;
+  padding: 0.3rem 0.5rem;
 }
 
 .nav-links {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.15rem;
 }
 
 .nav-link {
   color: var(--text) !important;
-  font-size: 0.95rem;
-  min-height: 2rem;
-  padding: 0 0.45rem;
+  font-size: 0.82rem;
+  min-height: 1.65rem;
+  padding: 0 0.38rem;
 }
 a.nav-link:hover {
   color: var(--primary) !important;
@@ -259,49 +259,106 @@ span.nav-link[aria-current="page"] {
 
 .nav-tools {
   display: flex;
-  gap: 0.45rem;
+  flex-wrap: nowrap;
+  gap: 0.3rem;
   align-items: center;
 }
 
 .nav-actions {
   display: flex;
-  gap: 0.35rem;
+  gap: 0.25rem;
 }
 
 .nav-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  padding: 0.35rem;
+  width: 1.65rem;
+  height: 1.65rem;
+  padding: 0.22rem;
   border: 1px solid var(--primary);
   color: var(--primary) !important;
   background-color: var(--surface-2);
   background-image: none !important;
   border-radius: 0;
   cursor: pointer;
+  transition:
+    color var(--ease),
+    background-color var(--ease),
+    transform 80ms steps(2, end);
 }
 .nav-icon svg {
   width: 100%;
   height: 100%;
   fill: currentColor;
   image-rendering: pixelated;
+  overflow: visible;
+}
+.nav-icon .search-lens,
+.nav-icon .search-handle,
+.nav-icon .rss-wave,
+.nav-icon .rss-dot {
+  transform-box: fill-box;
+  transform-origin: center;
 }
 button.nav-icon:hover,
 button.nav-icon:focus-visible,
-.nav-icon[aria-current="page"] {
+.nav-icon[aria-current="page"],
+.nav-icon[aria-expanded="true"] {
   color: var(--on-primary) !important;
   background-color: var(--primary);
 }
+.nav-icon:active {
+  transform: translate(1px, 1px);
+}
+
+@keyframes search-scan {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  35% {
+    transform: translate(1px, -1px);
+  }
+  70% {
+    transform: translate(-1px, 1px);
+  }
+}
+
+@keyframes rss-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.28;
+  }
+}
+
+search-control:hover .search-handle,
+search-control.is-open .search-handle {
+  animation: search-scan 0.45s steps(2, end);
+}
+search-control:hover .search-lens,
+search-control.is-open .search-lens {
+  animation: search-scan 0.45s steps(2, end) reverse;
+}
+feed-picker:hover .rss-wave-1,
+feed-picker.is-open .rss-wave-1 {
+  animation: rss-pulse 0.7s steps(2, end) infinite;
+}
+feed-picker:hover .rss-wave-2,
+feed-picker.is-open .rss-wave-2 {
+  animation: rss-pulse 0.7s steps(2, end) 0.18s infinite;
+}
 
 select.ctrl {
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   color: var(--text);
   background-color: var(--surface-2);
   border: 2px solid var(--primary);
-  min-height: 2rem;
-  padding: 0 1.4rem 0 0.5rem;
+  min-height: 1.65rem;
+  padding: 0 1.2rem 0 0.4rem;
   border-radius: 0;
   cursor: pointer;
   appearance: none;
@@ -310,9 +367,9 @@ select.ctrl {
     linear-gradient(45deg, transparent 50%, var(--primary) 50%),
     linear-gradient(135deg, var(--primary) 50%, transparent 50%);
   background-position:
-    calc(100% - 12px) calc(50% - 2px),
-    calc(100% - 7px) calc(50% - 2px);
-  background-size: 5px 5px, 5px 5px;
+    calc(100% - 10px) calc(50% - 2px),
+    calc(100% - 6px) calc(50% - 2px);
+  background-size: 4px 4px, 4px 4px;
   background-repeat: no-repeat;
 }
 select.ctrl option {
@@ -454,6 +511,10 @@ select.ctrl option {
 a.tag:hover {
   background-color: color-mix(in srgb, var(--primary) 10%, transparent);
 }
+span.tag[aria-current="page"] {
+  color: var(--on-primary) !important;
+  background-color: var(--primary);
+}
 .tag.pinned {
   border-color: var(--accent-pink);
   color: var(--accent-pink) !important;
@@ -492,8 +553,8 @@ a.tag:hover {
 search-control,
 feed-picker {
   display: block;
-  width: 2rem;
-  height: 2rem;
+  width: 1.65rem;
+  height: 1.65rem;
 }
 
 .tool-dialog {
@@ -533,9 +594,9 @@ feed-picker {
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  padding: 0.4rem;
+  width: 1.65rem;
+  height: 1.65rem;
+  padding: 0.28rem;
   border: 1px solid var(--primary);
   border-radius: 0;
   color: var(--primary);
@@ -585,13 +646,41 @@ feed-picker {
 .search-results {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   margin: 0;
   padding: 0;
   list-style: none;
 }
+.search-result {
+  padding: 0.7rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--primary) 28%, transparent);
+}
+.search-result:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.search-result-title {
+  margin: 0 0 0.25rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.search-result-title a {
+  color: var(--text) !important;
+  background-image: none;
+  text-decoration-line: underline;
+  text-decoration-color: var(--link-line);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.16em;
+}
+.search-result-title a:hover {
+  color: var(--primary) !important;
+  text-decoration-color: var(--primary);
+}
 .search-result .card-excerpt {
-  margin-bottom: 0;
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--text-muted);
 }
 
 /* —— Feed dialog —— */
@@ -601,32 +690,57 @@ feed-picker {
 }
 .feed-option {
   display: flex;
+  align-items: stretch;
+  gap: 0;
+  border: 2px solid var(--primary);
+  background: var(--surface-2);
+}
+.feed-option a {
+  display: flex;
+  flex: 1;
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  width: 100%;
-  padding: 0.75rem 0.85rem;
-  border: 2px solid var(--primary);
-  border-radius: 0;
-  color: var(--text);
-  background: var(--surface-2);
+  min-width: 0;
+  padding: 0.7rem 0.8rem;
+  color: var(--text) !important;
+  background-image: none !important;
   text-align: left;
-  cursor: pointer;
 }
-.feed-option:hover,
-.feed-option:focus-visible,
-.feed-option[data-state="copied"] {
-  color: var(--on-primary);
-  background: var(--primary);
+.feed-option a:hover,
+.feed-option a:focus-visible {
+  color: var(--on-primary) !important;
+  background-color: var(--primary);
 }
 .feed-option small {
   color: var(--text-muted);
   font-family: var(--font-code);
 }
-.feed-option:hover small,
-.feed-option:focus-visible small,
-.feed-option[data-state="copied"] small {
+.feed-option a:hover small,
+.feed-option a:focus-visible small {
   color: inherit;
+}
+.feed-copy {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  border: 0;
+  border-left: 2px solid var(--primary);
+  color: var(--primary);
+  background: var(--surface);
+  cursor: pointer;
+}
+.feed-copy:hover,
+.feed-copy:focus-visible,
+.feed-copy[data-state="copied"] {
+  color: var(--on-primary);
+  background: var(--primary);
+}
+.feed-copy svg {
+  width: 0.85rem;
+  height: 0.85rem;
 }
 .feed-status {
   margin: 0.85rem 0 0;
@@ -954,34 +1068,69 @@ main pre:not(.code-window pre) code {
   color: var(--tok-num);
 }
 
-/* —— Archive rows —— */
+/* —— Archive —— */
 .archive-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-block);
+  gap: 1.75rem;
 }
 .archive-year {
+  display: grid;
+  grid-template-columns: 4.6rem minmax(0, 1fr);
+  align-items: start;
+  gap: 0.35rem 1rem;
   margin: 0;
+}
+.archive-year-title {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 1.15rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+  color: var(--primary);
+  position: sticky;
+  top: 3.15rem;
+}
+.archive-year-count {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
 }
 .archive-rows {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-  margin-top: 0.75rem;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0 0 0 0.9rem;
+  list-style: none;
+  border-left: 2px solid color-mix(in srgb, var(--primary) 50%, transparent);
 }
 .archive-row {
   display: grid;
   grid-template-columns: 4.75rem minmax(0, 1fr);
   align-items: baseline;
   gap: 0.75rem;
+  margin: 0;
+  padding: 0.4rem 0.35rem 0.4rem 0.15rem;
   font-family: var(--font-ui);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   line-height: 1.4;
+}
+.archive-row:hover,
+.archive-row:focus-within {
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
 }
 .archive-row .date {
   color: var(--text-muted);
   min-width: 4.75rem;
   flex-shrink: 0;
+}
+.archive-row:hover .date,
+.archive-row:focus-within .date {
+  color: var(--primary);
 }
 .archive-row a {
   color: var(--text);
@@ -1000,9 +1149,30 @@ main pre:not(.code-window pre) code {
 }
 
 @media (max-width: 30rem) {
+  .archive-year {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+  }
+  .archive-year-title {
+    position: static;
+    display: flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    padding-bottom: 0.45rem;
+    border-bottom: 2px solid var(--primary);
+  }
+  .archive-year-count {
+    display: inline;
+    margin: 0;
+  }
+  .archive-rows {
+    border-left: 0;
+    padding-left: 0;
+  }
   .archive-row {
     grid-template-columns: 1fr;
     gap: 0.15rem;
+    padding-left: 0;
   }
 }
 
@@ -1030,12 +1200,25 @@ main pre:not(.code-window pre) code {
   text-align: center;
   color: var(--text-muted);
 }
+.empty-state .meta {
+  justify-content: center;
+  margin: 0;
+}
+
+.not-found-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.65rem;
+  margin-top: 1.5rem;
+}
 
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     transition: none !important;
+    animation: none !important;
   }
 
   ::view-transition-old(root),
