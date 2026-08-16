@@ -24,7 +24,7 @@ export function useTranslate(locale: string) {
 
 /** Build locale-aware URL: /en/path or /zh-cn/path */
 export function l(locale: string, path: string): string {
-  const prefix = locale === "en" ? "/en" : "/zh-cn";
+  const prefix = LANGS.includes(locale as Lang) ? `/${locale}` : "/en";
   if (!path || path === "/") return prefix;
   return prefix + (path.startsWith("/") ? path : "/" + path);
 }

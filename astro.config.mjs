@@ -75,7 +75,7 @@ function removeDuplicateTitle() {
 /** @param {string} page */
 function isTranslatedTagAlias(page) {
   const { pathname } = new URL(page);
-  const match = pathname.match(/^\/(en|zh-cn)\/tag\/([^/]+)\/?$/);
+  const match = pathname.match(/^\/(en|zh-cn)\/tag\/([^/]+)(?:\/page\/\d+)?\/?$/);
   if (!match) return false;
 
   const [, lang, encodedTag] = match;

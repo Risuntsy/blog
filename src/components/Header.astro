@@ -31,17 +31,15 @@ const links = [
     <div class="nav-inner">
       <div class="nav-links">
         {
-          links.map((item) =>
-            current === item.key ? (
-              <span class="nav-link" aria-current="page">
-                {item.label}
-              </span>
-            ) : (
-              <a href={l(lang, item.href)} class="nav-link">
-                {item.label}
-              </a>
-            ),
-          )
+          links.map((item) => (
+            <a
+              href={l(lang, item.href)}
+              class="nav-link"
+              aria-current={current === item.key ? "page" : undefined}
+            >
+              {item.label}
+            </a>
+          ))
         }
       </div>
       <div class="nav-tools">
