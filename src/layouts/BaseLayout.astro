@@ -44,7 +44,7 @@ const desc = description || t("site_description");
     <title>{pageTitle}</title>
     <script is:inline>
       (() => {
-        const mode = localStorage.getItem("theme-mode") || "dark";
+        const mode = localStorage.getItem("theme-mode") || "auto";
 
         const dark =
           mode === "dark" ||

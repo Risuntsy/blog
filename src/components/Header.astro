@@ -89,7 +89,7 @@ const links = [
     };
 
     private onColorSchemeChange = () => {
-      const mode = localStorage.getItem("theme-mode") || "dark";
+      const mode = localStorage.getItem("theme-mode") || "auto";
       if (mode === "auto") this.applyTheme(mode);
     };
 
@@ -101,7 +101,7 @@ const links = [
     };
 
     connectedCallback() {
-      const mode = localStorage.getItem("theme-mode") || "dark";
+      const mode = localStorage.getItem("theme-mode") || "auto";
       if (this.themeSelect) this.themeSelect.value = mode;
       this.applyTheme(mode);
 
