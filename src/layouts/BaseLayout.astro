@@ -6,117 +6,94 @@ import fusionPixelFontUrl from "#/assets/fonts/fusion-pixel/fusion-pixel-12px-mo
 import "#/styles/global.css";
 
 interface Props {
-  lang: string;
-  title?: string;
-  description?: string;
-  current?: string;
-  languagePaths?: Record<string, string>;
+    lang: string;
+    title?: string;
+    description?: string;
+    current?: string;
+    languagePaths?: Record<string, string>;
 }
 
 const { lang, title, description, current = "", languagePaths } = Astro.props;
 const t = useTranslate(lang);
-const pageTitle = title
-  ? `${title} | ${t("site_title")}`
-  : t("site_title");
+const pageTitle = title ? `${title} | ${t("site_title")}` : t("site_title");
 const desc = description || t("site_description");
 ---
 
 <!doctype html>
 <html lang={lang === "zh-cn" ? "zh-CN" : "en"}>
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link
-      rel="preload"
-      href={fusionPixelFontUrl}
-      as="font"
-      type="font/woff2"
-      crossorigin="anonymous"
-    />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={desc} />
-    <link
-      rel="alternate"
-      type="application/rss+xml"
-      title={t("site_title")}
-      href={`/${lang}/rss.xml`}
-    />
-    <title>{pageTitle}</title>
-    <script is:inline>
-      (() => {
-        const mode = localStorage.getItem("theme-mode") || "auto";
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="preload" href={fusionPixelFontUrl} as="font" type="font/woff2" crossorigin="anonymous" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content={desc} />
+        <link rel="alternate" type="application/rss+xml" title={t("site_title")} href={`/${lang}/rss.xml`} />
+        <title>{pageTitle}</title>
+        <script is:inline>
+            (() => {
+                const mode = localStorage.getItem("theme-mode") || "auto";
 
-        const dark =
-          mode === "dark" ||
-          (mode === "auto" &&
-            matchMedia("(prefers-color-scheme: dark)").matches);
-        if (dark) document.documentElement.classList.add("dark");
-      })();
-    </script>
-  </head>
-  <body>
-    <div class="container">
-      <Header lang={lang} current={current} languagePaths={languagePaths} />
-      <copy-region>
-        <main>
-          <slot />
-        </main>
-      </copy-region>
-    </div>
-    <Footer lang={lang} />
-    <script>
-      class CopyRegion extends HTMLElement {
-        private onActivate = (event: MouseEvent | KeyboardEvent) => {
-          const target = event.target;
-          if (!(target instanceof Element)) return;
+                const dark = mode === "dark" || (mode === "auto" && matchMedia("(prefers-color-scheme: dark)").matches);
+                if (dark) document.documentElement.classList.add("dark");
+            })();
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <Header lang={lang} current={current} languagePaths={languagePaths} />
+            <copy-region>
+                <main>
+                    <slot />
+                </main>
+            </copy-region>
+        </div>
+        <Footer lang={lang} />
+        <script>
+            class CopyRegion extends HTMLElement {
+                private onActivate = (event: MouseEvent | KeyboardEvent) => {
+                    const target = event.target;
+                    if (!(target instanceof Element)) return;
 
-          const trigger = target.closest<HTMLElement>("[data-copy]");
-          if (!trigger || !this.contains(trigger)) return;
-          if (
-            event instanceof KeyboardEvent &&
-            event.key !== "Enter" &&
-            event.key !== " "
-          )
-            return;
+                    const trigger = target.closest<HTMLElement>("[data-copy]");
+                    if (!trigger || !this.contains(trigger)) return;
+                    if (event instanceof KeyboardEvent && event.key !== "Enter" && event.key !== " ") return;
 
-          event.preventDefault();
-          void this.copy(trigger);
-        };
+                    event.preventDefault();
+                    void this.copy(trigger);
+                };
 
-        connectedCallback() {
-          this.addEventListener("click", this.onActivate);
-          this.addEventListener("keydown", this.onActivate);
-        }
+                connectedCallback() {
+                    this.addEventListener("click", this.onActivate);
+                    this.addEventListener("keydown", this.onActivate);
+                }
 
-        disconnectedCallback() {
-          this.removeEventListener("click", this.onActivate);
-          this.removeEventListener("keydown", this.onActivate);
-        }
+                disconnectedCallback() {
+                    this.removeEventListener("click", this.onActivate);
+                    this.removeEventListener("keydown", this.onActivate);
+                }
 
-        private async copy(trigger: HTMLElement) {
-          const text =
-            trigger.closest(".code-window")?.querySelector("pre")
-              ?.textContent ?? "";
-          const label = trigger.getAttribute("aria-label") ?? "Copy";
+                private async copy(trigger: HTMLElement) {
+                    const text = trigger.closest(".code-window")?.querySelector("pre")?.textContent ?? "";
+                    const label = trigger.getAttribute("aria-label") ?? "Copy";
 
-          try {
-            await navigator.clipboard.writeText(text);
-            trigger.dataset.state = "copied";
-            trigger.setAttribute("aria-label", "Copied");
-          } catch {
-            trigger.setAttribute("aria-label", "Copy failed");
-          }
+                    try {
+                        await navigator.clipboard.writeText(text);
+                        trigger.dataset.state = "copied";
+                        trigger.setAttribute("aria-label", "Copied");
+                    } catch {
+                        trigger.setAttribute("aria-label", "Copy failed");
+                    }
 
-          window.setTimeout(() => {
-            delete trigger.dataset.state;
-            trigger.setAttribute("aria-label", label);
-          }, 1200);
-        }
-      }
+                    window.setTimeout(() => {
+                        delete trigger.dataset.state;
+                        trigger.setAttribute("aria-label", label);
+                    }, 1200);
+                }
+            }
 
-      if (!customElements.get("copy-region")) {
-        customElements.define("copy-region", CopyRegion);
-      }
-    </script>
-  </body>
+            if (!customElements.get("copy-region")) {
+                customElements.define("copy-region", CopyRegion);
+            }
+        </script>
+    </body>
 </html>

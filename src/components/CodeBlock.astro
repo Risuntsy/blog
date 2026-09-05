@@ -1,52 +1,26 @@
 ---
 interface Props {
-  lang?: string;
-  filename?: string;
-  code: string;
+    lang?: string;
+    filename?: string;
+    code: string;
 }
 
 const { lang = "", filename = "", code } = Astro.props;
 ---
 
 <div class="code-window">
-  <div class="code-titlebar">
-    <span class="file">{filename}</span>
-    <span class="lang">{lang}</span>
-    <button type="button" class="code-copy" data-copy aria-label="Copy">
-      <svg
-        class="icon-copy"
-        viewBox="0 0 12 12"
-        aria-hidden="true"
-        shape-rendering="crispEdges"
-      >
-        <rect
-          x="3"
-          y="0"
-          width="9"
-          height="9"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1"></rect>
-        <rect
-          class="sheet"
-          x="0"
-          y="3"
-          width="9"
-          height="9"
-          stroke="currentColor"
-          stroke-width="1"></rect>
-      </svg>
-      <svg
-        class="icon-check"
-        viewBox="0 0 12 12"
-        aria-hidden="true"
-        shape-rendering="crispEdges"
-      >
-        <path
-          d="M1 6h2v2H1zm2 2h2v2H3zm2 0h2V6H5zm2-2h2V4H7zm2-2h2V2H9z"
-          fill="currentColor"></path>
-      </svg>
-    </button>
-  </div>
-  <pre><code set:html={code} /></pre>
+    <div class="code-titlebar">
+        <span class="file">{filename}</span>
+        <span class="lang">{lang}</span>
+        <button type="button" class="code-copy" data-copy aria-label="Copy">
+            <svg class="icon-copy" viewBox="0 0 12 12" aria-hidden="true" shape-rendering="crispEdges">
+                <rect x="3" y="0" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1"></rect>
+                <rect class="sheet" x="0" y="3" width="9" height="9" stroke="currentColor" stroke-width="1"></rect>
+            </svg>
+            <svg class="icon-check" viewBox="0 0 12 12" aria-hidden="true" shape-rendering="crispEdges">
+                <path d="M1 6h2v2H1zm2 2h2v2H3zm2 0h2V6H5zm2-2h2V4H7zm2-2h2V2H9z" fill="currentColor"></path>
+            </svg>
+        </button>
+    </div>
+    <pre><code set:html={code} /></pre>
 </div>

@@ -2,192 +2,188 @@
 import { useTranslate } from "#/i18n";
 
 interface Props {
-  lang: string;
+    lang: string;
 }
 
 const { lang } = Astro.props;
 const t = useTranslate(lang);
 const titleId = `feed-title-${lang}`;
 const feeds = [
-  { href: new URL("/rss.xml", Astro.site), label: t("rss_all") },
-  { href: new URL("/en/rss.xml", Astro.site), label: t("rss_en") },
-  { href: new URL("/zh-cn/rss.xml", Astro.site), label: t("rss_zh") },
+    { href: new URL("/rss.xml", Astro.site), label: t("rss_all") },
+    { href: new URL("/en/rss.xml", Astro.site), label: t("rss_en") },
+    { href: new URL("/zh-cn/rss.xml", Astro.site), label: t("rss_zh") },
 ];
 ---
 
-<feed-picker
-  data-copied={t("copied")}
-  data-copy-failed={t("copy_failed")}
->
-  <button
-    class="nav-icon"
-    type="button"
-    data-open-feed
-    aria-expanded="false"
-    aria-haspopup="dialog"
-    aria-label={t("nav_feed")}
-    title={t("nav_feed")}
-  >
-    <svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges">
-      <path class="rss-dot" d="M2 11h3v3H2z"></path>
-      <path class="rss-wave rss-wave-1" d="M2 7h2v1h1v1h1v1h1v1h1v2H7v-1H6v-1H5v-1H4V9H2z"></path>
-      <path class="rss-wave rss-wave-2" d="M2 2h2v1h2v1h2v1h1v1h1v1h1v1h1v1h1v2h-2v-1h-1V9h-1V8H9V7H8V6H6V5H4V4H2z"></path>
-    </svg>
-  </button>
-
-  <dialog class="tool-dialog feed-dialog" aria-labelledby={titleId}>
-    <div class="dialog-head">
-      <div>
-        <h2 id={titleId}>{t("rss_title")}</h2>
-        <p>{t("rss_intro")}</p>
-      </div>
-      <button
-        class="dialog-close"
+<feed-picker data-copied={t("copied")} data-copy-failed={t("copy_failed")}>
+    <button
+        class="nav-icon"
         type="button"
-        data-close-dialog
-        aria-label={t("close")}
-        title={t("close")}
-      >
-        <svg viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M3 2 8 7l5-5 1 1-5 5 5 5-1 1-5-5-5 5-1-1 5-5-5-5z"></path>
+        data-open-feed
+        aria-expanded="false"
+        aria-haspopup="dialog"
+        aria-label={t("nav_feed")}
+        title={t("nav_feed")}
+    >
+        <svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges">
+            <path class="rss-dot" d="M2 11h3v3H2z"></path>
+            <path class="rss-wave rss-wave-1" d="M2 7h2v1h1v1h1v1h1v1h1v2H7v-1H6v-1H5v-1H4V9H2z"></path>
+            <path
+                class="rss-wave rss-wave-2"
+                d="M2 2h2v1h2v1h2v1h1v1h1v1h1v1h1v1h1v2h-2v-1h-1V9h-1V8H9V7H8V6H6V5H4V4H2z"></path>
         </svg>
-      </button>
-    </div>
-    <div class="feed-options">
-      {
-        feeds.map(({ href, label }) => (
-          <div class="feed-option">
-            <a href={href.href} target="_blank" rel="noopener noreferrer">
-              <span>{label}</span>
-              <small>{href.pathname}</small>
-            </a>
-            <button
-              class="feed-copy"
-              type="button"
-              data-feed-url={href.href}
-              aria-label={t("copy_link")}
-              title={t("copy_link")}
-            >
-              <svg viewBox="0 0 12 12" aria-hidden="true" shape-rendering="crispEdges">
-                <rect x="3" y="0" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1"></rect>
-                <rect class="sheet" x="0" y="3" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1"></rect>
-              </svg>
+    </button>
+
+    <dialog class="tool-dialog feed-dialog" aria-labelledby={titleId}>
+        <div class="dialog-head">
+            <div>
+                <h2 id={titleId}>{t("rss_title")}</h2>
+                <p>{t("rss_intro")}</p>
+            </div>
+            <button class="dialog-close" type="button" data-close-dialog aria-label={t("close")} title={t("close")}>
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                    <path d="M3 2 8 7l5-5 1 1-5 5 5 5-1 1-5-5-5 5-1-1 5-5-5-5z"></path>
+                </svg>
             </button>
-          </div>
-        ))
-      }
-    </div>
-    <p class="feed-status meta" data-feed-status aria-live="polite"></p>
-  </dialog>
+        </div>
+        <div class="feed-options">
+            {
+                feeds.map(({ href, label }) => (
+                    <div class="feed-option">
+                        <a href={href.href} target="_blank" rel="noopener noreferrer">
+                            <span>{label}</span>
+                            <small>{href.pathname}</small>
+                        </a>
+                        <button
+                            class="feed-copy"
+                            type="button"
+                            data-feed-url={href.href}
+                            aria-label={t("copy_link")}
+                            title={t("copy_link")}
+                        >
+                            <svg viewBox="0 0 12 12" aria-hidden="true" shape-rendering="crispEdges">
+                                <rect
+                                    x="3"
+                                    y="0"
+                                    width="9"
+                                    height="9"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1"
+                                />
+                                <rect
+                                    class="sheet"
+                                    x="0"
+                                    y="3"
+                                    width="9"
+                                    height="9"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+                ))
+            }
+        </div>
+        <p class="feed-status meta" data-feed-status aria-live="polite"></p>
+    </dialog>
 </feed-picker>
 
 <script>
-  class FeedPicker extends HTMLElement {
-    private readonly openButton =
-      this.querySelector<HTMLButtonElement>("[data-open-feed]");
-    private readonly closeButton = this.querySelector<HTMLButtonElement>(
-      "[data-close-dialog]",
-    );
-    private readonly dialog = this.querySelector<HTMLDialogElement>("dialog");
-    private readonly options = this.querySelectorAll<HTMLButtonElement>(
-      "[data-feed-url]",
-    );
-    private readonly status = this.querySelector<HTMLElement>(
-      "[data-feed-status]",
-    );
+    class FeedPicker extends HTMLElement {
+        private readonly openButton = this.querySelector<HTMLButtonElement>("[data-open-feed]");
+        private readonly closeButton = this.querySelector<HTMLButtonElement>("[data-close-dialog]");
+        private readonly dialog = this.querySelector<HTMLDialogElement>("dialog");
+        private readonly options = this.querySelectorAll<HTMLButtonElement>("[data-feed-url]");
+        private readonly status = this.querySelector<HTMLElement>("[data-feed-status]");
 
-    private syncOpen = () => {
-      const open = Boolean(this.dialog?.open);
-      this.classList.toggle("is-open", open);
-      this.openButton?.setAttribute("aria-expanded", String(open));
-    };
+        private syncOpen = () => {
+            const open = Boolean(this.dialog?.open);
+            this.classList.toggle("is-open", open);
+            this.openButton?.setAttribute("aria-expanded", String(open));
+        };
 
-    private onOpen = () => {
-      if (!this.dialog?.open) this.dialog?.showModal();
-      this.syncOpen();
-    };
+        private onOpen = () => {
+            if (!this.dialog?.open) this.dialog?.showModal();
+            this.syncOpen();
+        };
 
-    private onClose = () => this.dialog?.close();
+        private onClose = () => this.dialog?.close();
 
-    private onBackdropClick = (event: MouseEvent) => {
-      if (!this.dialog || event.target !== this.dialog) return;
-      const bounds = this.dialog.getBoundingClientRect();
-      const outside =
-        event.clientX < bounds.left ||
-        event.clientX > bounds.right ||
-        event.clientY < bounds.top ||
-        event.clientY > bounds.bottom;
-      if (outside) this.dialog.close();
-    };
+        private onBackdropClick = (event: MouseEvent) => {
+            if (!this.dialog || event.target !== this.dialog) return;
+            const bounds = this.dialog.getBoundingClientRect();
+            const outside =
+                event.clientX < bounds.left ||
+                event.clientX > bounds.right ||
+                event.clientY < bounds.top ||
+                event.clientY > bounds.bottom;
+            if (outside) this.dialog.close();
+        };
 
-    private onSelect = (event: MouseEvent) => {
-      const option = event.currentTarget;
-      if (!(option instanceof HTMLButtonElement)) return;
-      const feedUrl = option.dataset.feedUrl;
-      if (!feedUrl) return;
-      void this.copy(feedUrl, option);
-    };
+        private onSelect = (event: MouseEvent) => {
+            const option = event.currentTarget;
+            if (!(option instanceof HTMLButtonElement)) return;
+            const feedUrl = option.dataset.feedUrl;
+            if (!feedUrl) return;
+            void this.copy(feedUrl, option);
+        };
 
-    connectedCallback() {
-      this.openButton?.addEventListener("click", this.onOpen);
-      this.closeButton?.addEventListener("click", this.onClose);
-      this.dialog?.addEventListener("click", this.onBackdropClick);
-      this.dialog?.addEventListener("close", this.syncOpen);
-      this.options.forEach((option) =>
-        option.addEventListener("click", this.onSelect),
-      );
-      this.syncOpen();
-    }
-
-    disconnectedCallback() {
-      this.openButton?.removeEventListener("click", this.onOpen);
-      this.closeButton?.removeEventListener("click", this.onClose);
-      this.dialog?.removeEventListener("click", this.onBackdropClick);
-      this.dialog?.removeEventListener("close", this.syncOpen);
-      this.options.forEach((option) =>
-        option.removeEventListener("click", this.onSelect),
-      );
-    }
-
-    private async copy(feedUrl: string, option: HTMLButtonElement) {
-      try {
-        await this.writeClipboard(feedUrl);
-        this.options.forEach((item) => delete item.dataset.state);
-        option.dataset.state = "copied";
-        if (this.status) this.status.textContent = this.dataset.copied ?? "";
-      } catch {
-        if (this.status) {
-          this.status.textContent = this.dataset.copyFailed ?? "";
+        connectedCallback() {
+            this.openButton?.addEventListener("click", this.onOpen);
+            this.closeButton?.addEventListener("click", this.onClose);
+            this.dialog?.addEventListener("click", this.onBackdropClick);
+            this.dialog?.addEventListener("close", this.syncOpen);
+            this.options.forEach(option => option.addEventListener("click", this.onSelect));
+            this.syncOpen();
         }
-      }
-    }
 
-    private async writeClipboard(text: string) {
-      if (navigator.clipboard?.writeText) {
-        try {
-          await navigator.clipboard.writeText(text);
-          return;
-        } catch {
+        disconnectedCallback() {
+            this.openButton?.removeEventListener("click", this.onOpen);
+            this.closeButton?.removeEventListener("click", this.onClose);
+            this.dialog?.removeEventListener("click", this.onBackdropClick);
+            this.dialog?.removeEventListener("close", this.syncOpen);
+            this.options.forEach(option => option.removeEventListener("click", this.onSelect));
         }
-      }
 
-      const textarea = document.createElement("textarea");
-      textarea.value = text;
-      textarea.readOnly = true;
-      textarea.style.position = "fixed";
-      textarea.style.opacity = "0";
-      document.body.append(textarea);
-      textarea.select();
-      const legacyCopy = Reflect.get(document, "execCommand") as (
-        command: string,
-      ) => boolean;
-      const copied = legacyCopy.call(document, "copy");
-      textarea.remove();
-      if (!copied) throw new Error("Copy failed");
+        private async copy(feedUrl: string, option: HTMLButtonElement) {
+            try {
+                await this.writeClipboard(feedUrl);
+                this.options.forEach(item => delete item.dataset.state);
+                option.dataset.state = "copied";
+                if (this.status) this.status.textContent = this.dataset.copied ?? "";
+            } catch {
+                if (this.status) {
+                    this.status.textContent = this.dataset.copyFailed ?? "";
+                }
+            }
+        }
+
+        private async writeClipboard(text: string) {
+            if (navigator.clipboard?.writeText) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    return;
+                } catch {}
+            }
+
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.readOnly = true;
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+            document.body.append(textarea);
+            textarea.select();
+            const legacyCopy = Reflect.get(document, "execCommand") as (command: string) => boolean;
+            const copied = legacyCopy.call(document, "copy");
+            textarea.remove();
+            if (!copied) throw new Error("Copy failed");
+        }
     }
-  }
 
-  if (!customElements.get("feed-picker")) {
-    customElements.define("feed-picker", FeedPicker);
-  }
+    if (!customElements.get("feed-picker")) {
+        customElements.define("feed-picker", FeedPicker);
+    }
 </script>

@@ -4,120 +4,112 @@ import Search from "#/components/Search.astro";
 import FeedPicker from "#/components/FeedPicker.astro";
 
 interface Props {
-  lang: string;
-  current?: string;
-  languagePaths?: Record<string, string>;
+    lang: string;
+    current?: string;
+    languagePaths?: Record<string, string>;
 }
 
 const { lang, current = "", languagePaths: languagePathOverrides } = Astro.props;
 const t = useTranslate(lang);
 const languagePaths =
-  languagePathOverrides ??
-  Object.fromEntries(
-    LANGS.map((code) => [code, languagePath(Astro.url.pathname, code)]),
-  );
-const languageCodes = LANGS.filter((code) => languagePaths[code]);
+    languagePathOverrides ?? Object.fromEntries(LANGS.map(code => [code, languagePath(Astro.url.pathname, code)]));
+const languageCodes = LANGS.filter(code => languagePaths[code]);
 
 const links = [
-  { key: "posts", href: "", label: t("nav_posts") },
-  { key: "tags", href: "/tag", label: t("nav_tags") },
-  { key: "archive", href: "/archive", label: t("nav_archive") },
-  { key: "about", href: "/about", label: t("nav_about") },
+    { key: "posts", href: "", label: t("nav_posts") },
+    { key: "tags", href: "/tag", label: t("nav_tags") },
+    { key: "archive", href: "/archive", label: t("nav_archive") },
+    { key: "about", href: "/about", label: t("nav_about") },
 ];
 ---
 
 <blog-header>
-  <nav class="nav">
-    <div class="nav-inner">
-      <div class="nav-links">
-        {
-          links.map((item) => (
-            <a
-              href={l(lang, item.href)}
-              class="nav-link"
-              aria-current={current === item.key ? "page" : undefined}
-            >
-              {item.label}
-            </a>
-          ))
-        }
-      </div>
-      <div class="nav-tools">
-        {
-          languageCodes.length > 1 && (
-            <select data-language class="ctrl" aria-label={t("nav_language")}>
-              {languageCodes.map((code) => (
-                <option value={languagePaths[code]} selected={code === lang}>
-                  {code === "zh-cn" ? "中文" : "EN"}
-                </option>
-              ))}
-            </select>
-          )
-        }
-        <select data-theme class="ctrl" aria-label={t("nav_theme")}>
-          <option value="dark">{t("theme_dark")}</option>
-          <option value="light">{t("theme_light")}</option>
-          <option value="auto">{t("theme_auto")}</option>
-        </select>
-        <div class="nav-actions">
-          <Search lang={lang} />
-          <FeedPicker lang={lang} />
+    <nav class="nav">
+        <div class="nav-inner">
+            <div class="nav-links">
+                {
+                    links.map(item => (
+                        <a
+                            href={l(lang, item.href)}
+                            class="nav-link"
+                            aria-current={current === item.key ? "page" : undefined}
+                        >
+                            {item.label}
+                        </a>
+                    ))
+                }
+            </div>
+            <div class="nav-tools">
+                {
+                    languageCodes.length > 1 && (
+                        <select data-language class="ctrl" aria-label={t("nav_language")}>
+                            {languageCodes.map(code => (
+                                <option value={languagePaths[code]} selected={code === lang}>
+                                    {code === "zh-cn" ? "中文" : "EN"}
+                                </option>
+                            ))}
+                        </select>
+                    )
+                }
+                <select data-theme class="ctrl" aria-label={t("nav_theme")}>
+                    <option value="dark">{t("theme_dark")}</option>
+                    <option value="light">{t("theme_light")}</option>
+                    <option value="auto">{t("theme_auto")}</option>
+                </select>
+                <div class="nav-actions">
+                    <Search lang={lang} />
+                    <FeedPicker lang={lang} />
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </nav>
+    </nav>
 </blog-header>
 
 <script>
-  class BlogHeader extends HTMLElement {
-    private readonly colorScheme = matchMedia("(prefers-color-scheme: dark)");
-    private readonly themeSelect =
-      this.querySelector<HTMLSelectElement>("[data-theme]");
-    private readonly languageSelect =
-      this.querySelector<HTMLSelectElement>("[data-language]");
+    class BlogHeader extends HTMLElement {
+        private readonly colorScheme = matchMedia("(prefers-color-scheme: dark)");
+        private readonly themeSelect = this.querySelector<HTMLSelectElement>("[data-theme]");
+        private readonly languageSelect = this.querySelector<HTMLSelectElement>("[data-language]");
 
-    private applyTheme(mode: string) {
-      const dark =
-        mode === "dark" || (mode === "auto" && this.colorScheme.matches);
-      document.documentElement.classList.toggle("dark", dark);
+        private applyTheme(mode: string) {
+            const dark = mode === "dark" || (mode === "auto" && this.colorScheme.matches);
+            document.documentElement.classList.toggle("dark", dark);
+        }
+
+        private onThemeChange = () => {
+            if (!this.themeSelect) return;
+            localStorage.setItem("theme-mode", this.themeSelect.value);
+            this.applyTheme(this.themeSelect.value);
+        };
+
+        private onColorSchemeChange = () => {
+            const mode = localStorage.getItem("theme-mode") || "auto";
+            if (mode === "auto") this.applyTheme(mode);
+        };
+
+        private onLanguageChange = () => {
+            if (!this.languageSelect) return;
+            location.assign(`${this.languageSelect.value}${location.search}${location.hash}`);
+        };
+
+        connectedCallback() {
+            const mode = localStorage.getItem("theme-mode") || "auto";
+            if (this.themeSelect) this.themeSelect.value = mode;
+            this.applyTheme(mode);
+
+            this.themeSelect?.addEventListener("change", this.onThemeChange);
+            this.languageSelect?.addEventListener("change", this.onLanguageChange);
+            this.colorScheme.addEventListener("change", this.onColorSchemeChange);
+        }
+
+        disconnectedCallback() {
+            this.themeSelect?.removeEventListener("change", this.onThemeChange);
+            this.languageSelect?.removeEventListener("change", this.onLanguageChange);
+            this.colorScheme.removeEventListener("change", this.onColorSchemeChange);
+        }
     }
 
-    private onThemeChange = () => {
-      if (!this.themeSelect) return;
-      localStorage.setItem("theme-mode", this.themeSelect.value);
-      this.applyTheme(this.themeSelect.value);
-    };
-
-    private onColorSchemeChange = () => {
-      const mode = localStorage.getItem("theme-mode") || "auto";
-      if (mode === "auto") this.applyTheme(mode);
-    };
-
-    private onLanguageChange = () => {
-      if (!this.languageSelect) return;
-      location.assign(
-        `${this.languageSelect.value}${location.search}${location.hash}`,
-      );
-    };
-
-    connectedCallback() {
-      const mode = localStorage.getItem("theme-mode") || "auto";
-      if (this.themeSelect) this.themeSelect.value = mode;
-      this.applyTheme(mode);
-
-      this.themeSelect?.addEventListener("change", this.onThemeChange);
-      this.languageSelect?.addEventListener("change", this.onLanguageChange);
-      this.colorScheme.addEventListener("change", this.onColorSchemeChange);
+    if (!customElements.get("blog-header")) {
+        customElements.define("blog-header", BlogHeader);
     }
-
-    disconnectedCallback() {
-      this.themeSelect?.removeEventListener("change", this.onThemeChange);
-      this.languageSelect?.removeEventListener("change", this.onLanguageChange);
-      this.colorScheme.removeEventListener("change", this.onColorSchemeChange);
-    }
-  }
-
-  if (!customElements.get("blog-header")) {
-    customElements.define("blog-header", BlogHeader);
-  }
 </script>

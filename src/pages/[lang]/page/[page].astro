@@ -6,16 +6,16 @@ import Pagination from "#/components/Pagination.astro";
 import { getPosts } from "#/utils";
 
 export async function getStaticPaths() {
-  const pageSize = 10;
-  const paths: Array<{ params: { lang: string; page: string } }> = [];
-  for (const lang of LANGS) {
-    const posts = await getPosts(lang);
-    const totalPages = Math.max(1, Math.ceil(posts.length / pageSize));
-    for (let i = 2; i <= totalPages; i++) {
-      paths.push({ params: { lang, page: String(i) } });
+    const pageSize = 10;
+    const paths: Array<{ params: { lang: string; page: string } }> = [];
+    for (const lang of LANGS) {
+        const posts = await getPosts(lang);
+        const totalPages = Math.max(1, Math.ceil(posts.length / pageSize));
+        for (let i = 2; i <= totalPages; i++) {
+            paths.push({ params: { lang, page: String(i) } });
+        }
     }
-  }
-  return paths;
+    return paths;
 }
 
 const pageSize = 10;
@@ -24,30 +24,22 @@ const t = useTranslate(lang);
 const currentPage = parseInt(Astro.params.page as string, 10);
 const posts = await getPosts(lang);
 const totalPages = Math.max(1, Math.ceil(posts.length / pageSize));
-const pagePosts = posts.slice(
-  (currentPage - 1) * pageSize,
-  currentPage * pageSize,
-);
+const pagePosts = posts.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 ---
 
 <BaseLayout lang={lang} title={t("nav_posts")} current="posts">
-  <section class="post-list">
-    {
-      pagePosts.length > 0 ? (
-        <>
-          {pagePosts.map((post) => (
-            <PostCard post={post} />
-          ))}
-          <Pagination
-            lang={lang}
-            currentPage={currentPage}
-            lastPage={totalPages}
-            basePath={`/${lang}`}
-          />
-        </>
-      ) : (
-        <p class="meta">{t("not_found")}</p>
-      )
-    }
-  </section>
+    <section class="post-list">
+        {
+            pagePosts.length > 0 ? (
+                <>
+                    {pagePosts.map(post => (
+                        <PostCard post={post} />
+                    ))}
+                    <Pagination lang={lang} currentPage={currentPage} lastPage={totalPages} basePath={`/${lang}`} />
+                </>
+            ) : (
+                <p class="meta">{t("not_found")}</p>
+            )
+        }
+    </section>
 </BaseLayout>

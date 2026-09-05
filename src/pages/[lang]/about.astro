@@ -3,7 +3,7 @@ import { LANGS, useTranslate } from "#/i18n";
 import BaseLayout from "#/layouts/BaseLayout.astro";
 
 export function getStaticPaths() {
-  return LANGS.map((lang) => ({ params: { lang } }));
+    return LANGS.map(lang => ({ params: { lang } }));
 }
 
 const lang = Astro.params.lang as string;
@@ -11,27 +11,27 @@ const t = useTranslate(lang);
 ---
 
 <BaseLayout lang={lang} title={t("about_title")} current="about">
-  <article class="article">
-    <header class="hero">
-      <h1>{t("about_title")}</h1>
-    </header>
-    <div class="article-body">
-      {
-        lang === "zh-cn" ? (
-          <>
-            <p>你好，我是 Risun。</p>
-            <p>喜欢折腾的开发者。这个博客用来记录和分享想法与经验。</p>
-          </>
-        ) : (
-          <>
-            <p>Greetings, this is Risun.</p>
-            <p>
-              I'm a developer who enjoys tinkering with things. This personal
-              blog is where I share thoughts and experiences.
-            </p>
-          </>
-        )
-      }
-    </div>
-  </article>
+    <article class="article">
+        <header class="hero">
+            <h1>{t("about_title")}</h1>
+        </header>
+        <div class="article-body">
+            {
+                lang === "zh-cn" ? (
+                    <>
+                        <p>你好，我是 Risun。</p>
+                        <p>喜欢折腾的开发者。这个博客用来记录和分享想法与经验。</p>
+                    </>
+                ) : (
+                    <>
+                        <p>Greetings, this is Risun.</p>
+                        <p>
+                            I'm a developer who enjoys tinkering with things. This personal blog is where I share
+                            thoughts and experiences.
+                        </p>
+                    </>
+                )
+            }
+        </div>
+    </article>
 </BaseLayout>

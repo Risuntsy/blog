@@ -4,8 +4,8 @@ import { useTranslate, fmtDate, tagHref } from "#/i18n";
 import { postSlug, postLang } from "#/utils";
 
 interface Props {
-  post: CollectionEntry<"post">;
-  currentTag?: string;
+    post: CollectionEntry<"post">;
+    currentTag?: string;
 }
 
 const { post, currentTag } = Astro.props;
@@ -16,40 +16,40 @@ const dateStr = fmtDate(lang, post.data.created_at);
 const href = `/${lang}/post/${slug}`;
 
 const bodyText = post.body
-  ?.replace(/^#+ .*/gm, "")
-  ?.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-  ?.replace(/[`*_~>#]/g, "")
-  ?.replace(/\n{2,}/g, " ")
-  ?.trim()
-  ?.slice(0, 200);
+    ?.replace(/^#+ .*/gm, "")
+    ?.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    ?.replace(/[`*_~>#]/g, "")
+    ?.replace(/\n{2,}/g, " ")
+    ?.trim()
+    ?.slice(0, 200);
 const preview = post.data.description || (bodyText ? `${bodyText}…` : "");
 ---
 
 <article class="card">
-  <h2 class="card-title">
-    <a href={href}>{post.data.title}</a>
-  </h2>
-  <p class="meta">{dateStr}</p>
-  {preview && <p class="card-excerpt">{preview}</p>}
-  {
-    (post.data.pinned || post.data.tags.length > 0) && (
-      <div class="tags">
-        {post.data.pinned && <span class="tag pinned">{t("pinned")}</span>}
-        {post.data.tags.map((tag) =>
-          tag === currentTag ? (
-            <span class="tag" aria-current="page">
-              #{tag}
-            </span>
-          ) : (
-            <a class="tag" href={tagHref(lang, tag)}>
-              #{tag}
-            </a>
-          ),
-        )}
-      </div>
-    )
-  }
-  <p class="card-more">
-    <a href={href}>{t("read_more")} →</a>
-  </p>
+    <h2 class="card-title">
+        <a href={href}>{post.data.title}</a>
+    </h2>
+    <p class="meta">{dateStr}</p>
+    {preview && <p class="card-excerpt">{preview}</p>}
+    {
+        (post.data.pinned || post.data.tags.length > 0) && (
+            <div class="tags">
+                {post.data.pinned && <span class="tag pinned">{t("pinned")}</span>}
+                {post.data.tags.map(tag =>
+                    tag === currentTag ? (
+                        <span class="tag" aria-current="page">
+                            #{tag}
+                        </span>
+                    ) : (
+                        <a class="tag" href={tagHref(lang, tag)}>
+                            #{tag}
+                        </a>
+                    ),
+                )}
+            </div>
+        )
+    }
+    <p class="card-more">
+        <a href={href}>{t("read_more")} →</a>
+    </p>
 </article>

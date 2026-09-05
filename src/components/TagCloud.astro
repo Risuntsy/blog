@@ -2,29 +2,29 @@
 import { tagHref, useTranslate } from "#/i18n";
 
 interface Props {
-  lang: string;
-  tags: Array<{ name: string; count: number }>;
+    lang: string;
+    tags: Array<{ name: string; count: number }>;
 }
 
 const { lang, tags } = Astro.props;
 const t = useTranslate(lang);
-const max = Math.max(1, ...tags.map((x) => x.count));
+const max = Math.max(1, ...tags.map(x => x.count));
 ---
 
 <div class="tags" style="gap: 0.65rem">
-  {
-    tags.map(({ name, count }) => {
-      const scale = 0.85 + (count / max) * 0.45;
-      return (
-        <a
-          class="tag"
-          href={tagHref(lang, name)}
-          style={`font-size: ${scale}rem`}
-          title={t("tag_count", { count })}
-        >
-          #{name}
-        </a>
-      );
-    })
-  }
+    {
+        tags.map(({ name, count }) => {
+            const scale = 0.85 + (count / max) * 0.45;
+            return (
+                <a
+                    class="tag"
+                    href={tagHref(lang, name)}
+                    style={`font-size: ${scale}rem`}
+                    title={t("tag_count", { count })}
+                >
+                    #{name}
+                </a>
+            );
+        })
+    }
 </div>

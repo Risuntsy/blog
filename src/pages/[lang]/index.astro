@@ -6,7 +6,7 @@ import Pagination from "#/components/Pagination.astro";
 import { getPosts } from "#/utils";
 
 export function getStaticPaths() {
-  return LANGS.map((lang) => ({ params: { lang } }));
+    return LANGS.map(lang => ({ params: { lang } }));
 }
 
 const pageSize = 10;
@@ -18,23 +18,18 @@ const pagePosts = posts.slice(0, pageSize);
 ---
 
 <BaseLayout lang={lang} current="posts">
-  <section class="post-list">
-    {
-      pagePosts.length > 0 ? (
-        <>
-          {pagePosts.map((post) => (
-            <PostCard post={post} />
-          ))}
-          <Pagination
-            lang={lang}
-            currentPage={1}
-            lastPage={totalPages}
-            basePath={`/${lang}`}
-          />
-        </>
-      ) : (
-        <p class="meta">{t("not_found")}</p>
-      )
-    }
-  </section>
+    <section class="post-list">
+        {
+            pagePosts.length > 0 ? (
+                <>
+                    {pagePosts.map(post => (
+                        <PostCard post={post} />
+                    ))}
+                    <Pagination lang={lang} currentPage={1} lastPage={totalPages} basePath={`/${lang}`} />
+                </>
+            ) : (
+                <p class="meta">{t("not_found")}</p>
+            )
+        }
+    </section>
 </BaseLayout>

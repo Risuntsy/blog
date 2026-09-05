@@ -4,12 +4,12 @@ import { LANGS, useTranslate, fmtDate, tagHref } from "#/i18n";
 import BaseLayout from "#/layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("post", ({ data }) => !data.draft);
-  return posts.map((post) => {
-    const lang = post.id.split("/")[0] ?? "en";
-    const slug = post.id.replace(/^(en|zh-cn)\//, "");
-    return { params: { lang, slug }, props: { post } };
-  });
+    const posts = await getCollection("post", ({ data }) => !data.draft);
+    return posts.map(post => {
+        const lang = post.id.split("/")[0] ?? "en";
+        const slug = post.id.replace(/^(en|zh-cn)\//, "");
+        return { params: { lang, slug }, props: { post } };
+    });
 }
 
 const lang = Astro.params.lang as string;
@@ -19,48 +19,43 @@ const { post } = Astro.props;
 
 const siblings = await getCollection("post", ({ data }) => !data.draft);
 const languagePaths = Object.fromEntries(
-  LANGS.filter((code) => siblings.some((item) => item.id === `${code}/${slug}`)).map(
-    (code) => [code, `/${code}/post/${slug}`],
-  ),
+    LANGS.filter(code => siblings.some(item => item.id === `${code}/${slug}`)).map(code => [
+        code,
+        `/${code}/post/${slug}`,
+    ]),
 );
 
 const { Content } = await render(post);
 const dateStr = fmtDate(lang, post.data.created_at);
-const updatedStr = post.data.updated_at
-  ? fmtDate(lang, post.data.updated_at)
-  : undefined;
+const updatedStr = post.data.updated_at ? fmtDate(lang, post.data.updated_at) : undefined;
 ---
 
 <BaseLayout
-  lang={lang}
-  title={post.data.title}
-  description={post.data.description}
-  current="posts"
-  languagePaths={languagePaths}
+    lang={lang}
+    title={post.data.title}
+    description={post.data.description}
+    current="posts"
+    languagePaths={languagePaths}
 >
-  <article class="article" data-pagefind-body>
-    <p class="meta">
-      <span>{t("posted_at", { date: dateStr })}</span>
-      {
-        updatedStr && updatedStr !== dateStr && (
-          <span>{t("updated_at", { date: updatedStr })}</span>
-        )
-      }
-    </p>
-    <h1 data-pagefind-meta="title">{post.data.title}</h1>
-    {
-      post.data.tags.length > 0 && (
-        <div class="tags">
-          {post.data.tags.map((tag) => (
-            <a class="tag" href={tagHref(lang, tag)}>
-              #{tag}
-            </a>
-          ))}
+    <article class="article" data-pagefind-body>
+        <p class="meta">
+            <span>{t("posted_at", { date: dateStr })}</span>
+            {updatedStr && updatedStr !== dateStr && <span>{t("updated_at", { date: updatedStr })}</span>}
+        </p>
+        <h1 data-pagefind-meta="title">{post.data.title}</h1>
+        {
+            post.data.tags.length > 0 && (
+                <div class="tags">
+                    {post.data.tags.map(tag => (
+                        <a class="tag" href={tagHref(lang, tag)}>
+                            #{tag}
+                        </a>
+                    ))}
+                </div>
+            )
+        }
+        <div class="article-body">
+            <Content />
         </div>
-      )
-    }
-    <div class="article-body">
-      <Content />
-    </div>
-  </article>
+    </article>
 </BaseLayout>

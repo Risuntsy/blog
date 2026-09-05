@@ -2,37 +2,37 @@
 import { useTranslate } from "#/i18n";
 
 interface Props {
-  lang: string;
-  currentPage: number;
-  lastPage: number;
-  /** base path without trailing slash, e.g. /en or /en/tag/foo */
-  basePath: string;
+    lang: string;
+    currentPage: number;
+    lastPage: number;
+    /** base path without trailing slash, e.g. /en or /en/tag/foo */
+    basePath: string;
 }
 
 const { lang, currentPage, lastPage, basePath } = Astro.props;
 const t = useTranslate(lang);
 
 function href(n: number) {
-  return n <= 1 ? basePath : `${basePath}/page/${n}`;
+    return n <= 1 ? basePath : `${basePath}/page/${n}`;
 }
 
 const pages = Array.from({ length: lastPage }, (_, i) => i + 1);
 ---
 
 {
-  lastPage > 1 && (
-    <nav class="pager" aria-label="pagination">
-      {currentPage > 1 && <a href={href(currentPage - 1)}>{t("prev_page")}</a>}
-      {pages.map((n) =>
-        n === currentPage ? (
-           <span class="current" aria-current="page">{n}</span>
-        ) : (
-          <a href={href(n)}>{n}</a>
-        ),
-      )}
-      {currentPage < lastPage && (
-        <a href={href(currentPage + 1)}>{t("next_page")}</a>
-      )}
-    </nav>
-  )
+    lastPage > 1 && (
+        <nav class="pager" aria-label="pagination">
+            {currentPage > 1 && <a href={href(currentPage - 1)}>{t("prev_page")}</a>}
+            {pages.map(n =>
+                n === currentPage ? (
+                    <span class="current" aria-current="page">
+                        {n}
+                    </span>
+                ) : (
+                    <a href={href(n)}>{n}</a>
+                ),
+            )}
+            {currentPage < lastPage && <a href={href(currentPage + 1)}>{t("next_page")}</a>}
+        </nav>
+    )
 }

@@ -4,65 +4,58 @@ import BaseLayout from "#/layouts/BaseLayout.astro";
 import { getPosts, postSlug } from "#/utils";
 
 export function getStaticPaths() {
-  return LANGS.map((lang) => ({ params: { lang } }));
+    return LANGS.map(lang => ({ params: { lang } }));
 }
 
 const lang = Astro.params.lang as string;
 const t = useTranslate(lang);
 const localePosts = [...(await getPosts(lang))].sort(
-  (a, b) => b.data.created_at.getTime() - a.data.created_at.getTime(),
+    (a, b) => b.data.created_at.getTime() - a.data.created_at.getTime(),
 );
 
 const yearMap = new Map<number, typeof localePosts>();
 for (const post of localePosts) {
-  const year = post.data.created_at.getFullYear();
-  if (!yearMap.has(year)) yearMap.set(year, []);
-  yearMap.get(year)!.push(post);
+    const year = post.data.created_at.getFullYear();
+    if (!yearMap.has(year)) yearMap.set(year, []);
+    yearMap.get(year)!.push(post);
 }
 const years = [...yearMap.entries()].sort(([a], [b]) => b - a);
 ---
 
 <BaseLayout lang={lang} title={t("archive_title")} current="archive">
-  <header class="hero">
-    <h1>{t("archive_title")}</h1>
-  </header>
+    <header class="hero">
+        <h1>{t("archive_title")}</h1>
+    </header>
 
-  {
-    years.length > 0 ? (
-      <div class="archive-list">
-        {years.map(([year, posts]) => (
-          <section class="archive-year">
-            <h2 class="archive-year-title">
-              {year}
-              <span class="archive-year-count">
-                {t("tag_count", { count: posts.length })}
-              </span>
-            </h2>
-            <ol class="archive-rows">
-              {posts.map((post) => (
-                <li class="archive-row">
-                  <time
-                    class="date"
-                    datetime={post.data.created_at.toISOString().slice(0, 10)}
-                  >
-                    {fmtDate(lang, post.data.created_at, {
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </time>
-                  <a href={l(lang, `/post/${postSlug(post)}`)}>
-                    {post.data.title}
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </section>
-        ))}
-      </div>
-    ) : (
-      <div class="empty-state">
-        <p class="meta">{t("not_found")}</p>
-      </div>
-    )
-  }
+    {
+        years.length > 0 ? (
+            <div class="archive-list">
+                {years.map(([year, posts]) => (
+                    <section class="archive-year">
+                        <h2 class="archive-year-title">
+                            {year}
+                            <span class="archive-year-count">{t("tag_count", { count: posts.length })}</span>
+                        </h2>
+                        <ol class="archive-rows">
+                            {posts.map(post => (
+                                <li class="archive-row">
+                                    <time class="date" datetime={post.data.created_at.toISOString().slice(0, 10)}>
+                                        {fmtDate(lang, post.data.created_at, {
+                                            month: "short",
+                                            day: "numeric",
+                                        })}
+                                    </time>
+                                    <a href={l(lang, `/post/${postSlug(post)}`)}>{post.data.title}</a>
+                                </li>
+                            ))}
+                        </ol>
+                    </section>
+                ))}
+            </div>
+        ) : (
+            <div class="empty-state">
+                <p class="meta">{t("not_found")}</p>
+            </div>
+        )
+    }
 </BaseLayout>
