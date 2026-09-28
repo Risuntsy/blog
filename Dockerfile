@@ -4,12 +4,11 @@ FROM docker.io/library/node:22-alpine AS build
 
 WORKDIR /app
 
-RUN apk add --no-cache git \
-  && corepack enable \
-  && corepack prepare pnpm@10.33.0 --activate
+RUN apk add --no-cache git
+COPY --from=docker.io/oven/bun:1-alpine /usr/local/bin/bun /usr/local/bin/bun
 
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 
 COPY . .
 
@@ -17,7 +16,7 @@ RUN --mount=type=secret,id=content_repo,required=false \
   if [ -f /run/secrets/content_repo ]; then \
     export CONTENT_REPO="$(cat /run/secrets/content_repo)"; \
   fi; \
-  pnpm run build
+  bun scripts/sync-content.mjs && bun run --bun astro build && bun run --bun pagefind --site dist
 
 FROM docker.io/library/nginx:1.29-alpine AS runtime
 
