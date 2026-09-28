@@ -41,10 +41,10 @@
 :root {
     /* Pixl's #040DE1 on #DDCFFF, calmed down: paler paper, a softer ink for
        links/borders/shadows, and deep indigo body text. */
-    --bg: #e6ddf8;
-    --fg: #3232c0;
-    --tint: #d6cbf2;
-    --text: #26246b;
+    --bg: #e2d6ff;
+    --fg: #2a2ad8;
+    --tint: #d1c1fc;
+    --text: #1e1b8c;
 
     --font-cjk-fallback: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
     --font: "DM Mono", "CJK", var(--font-cjk-fallback);
