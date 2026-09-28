@@ -39,11 +39,12 @@
 }
 
 :root {
-    --bg: #ddcfff;
-    --fg: #040de1;
-    --tint: #cdbaf9;
-    /* Light mode is single-ink; dark mode softens body text against the ink. */
-    --text: var(--fg);
+    /* Pixl's #040DE1 on #DDCFFF, calmed down: paler paper, a softer ink for
+       links/borders/shadows, and deep indigo body text. */
+    --bg: #e6ddf8;
+    --fg: #3232c0;
+    --tint: #d6cbf2;
+    --text: #26246b;
 
     --font-cjk-fallback: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
     --font: "DM Mono", "CJK", var(--font-cjk-fallback);
