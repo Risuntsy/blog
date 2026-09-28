@@ -17,6 +17,8 @@
     --bg: #ddcfff;
     --fg: #040de1;
     --tint: #cdbaf9;
+    /* Light mode is single-ink; dark mode softens body text against the ink. */
+    --text: var(--fg);
 
     --font: "DM Mono", ui-monospace, "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", monospace;
     --font-title: "Uni 05_53", var(--font);
@@ -28,7 +30,7 @@
     --shadow: 5px 5px 0 -2px var(--bg), 5px 5px var(--fg);
     --shadow-press: 2px 2px var(--fg);
 
-    --astro-code-foreground: var(--fg);
+    --astro-code-foreground: var(--text);
     --astro-code-background: transparent;
     --astro-code-token-keyword: var(--fg);
     --astro-code-token-function: var(--fg);
@@ -38,13 +40,14 @@
     --astro-code-token-string: color-mix(in srgb, var(--fg) 72%, var(--bg));
     --astro-code-token-string-expression: color-mix(in srgb, var(--fg) 72%, var(--bg));
     --astro-code-token-punctuation: color-mix(in srgb, var(--fg) 80%, var(--bg));
-    --astro-code-token-comment: color-mix(in srgb, var(--fg) 52%, var(--bg));
+    --astro-code-token-comment: color-mix(in srgb, var(--text) 52%, var(--bg));
 }
 
 html.dark {
-    --bg: #0b0c38;
-    --fg: #ddcfff;
-    --tint: #23256a;
+    --bg: #0e0d16;
+    --fg: #c9a8ff;
+    --tint: #221f33;
+    --text: #ede8ff;
 }
 
 *,
@@ -67,7 +70,7 @@ body {
     margin: 0;
     min-height: 100vh;
     padding: var(--outer);
-    color: var(--fg);
+    color: var(--text);
     background: var(--bg);
     font-family: var(--font);
     font-size: 0.9375rem;
@@ -185,7 +188,7 @@ a:active {
 .nav-link {
     padding: 0.1rem 0.2rem;
     border: 0;
-    color: var(--fg);
+    color: var(--text);
     background: none;
     font-size: 0.875rem;
     line-height: 1.6;
@@ -256,12 +259,6 @@ main {
     font-size: clamp(1.375rem, 1.3rem + 0.4vw, 1.625rem);
     line-height: 1.2;
     text-wrap: balance;
-}
-.card-title a {
-    text-decoration: none;
-}
-.card-title a:hover {
-    text-decoration: underline dotted 1px;
 }
 .card-excerpt {
     margin-top: 1.25rem;
@@ -629,7 +626,7 @@ feed-picker {
     overflow: auto;
     border: 2px solid var(--fg);
     border-radius: 0;
-    color: var(--fg);
+    color: var(--text);
     background: var(--bg);
     box-shadow: var(--shadow);
 }
@@ -688,7 +685,7 @@ feed-picker {
     outline: none;
 }
 .search-input::placeholder {
-    color: var(--fg);
+    color: var(--text);
     opacity: 0.6;
 }
 .search-input:focus-visible {
