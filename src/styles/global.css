@@ -260,6 +260,9 @@ main {
     line-height: 1.2;
     text-wrap: balance;
 }
+.card-title a {
+    text-decoration: none;
+}
 .card-excerpt {
     margin-top: 1.25rem;
 }
