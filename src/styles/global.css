@@ -9,6 +9,31 @@
     font-display: swap;
 }
 
+/* Chinese: use the system's proportional sans, never the mono CJK fallback,
+   and map DM Mono's 300/500 to the Regular/Medium cuts so Hanzi aren't
+   rendered hairline-thin. Curly quotes and the ellipsis are included so
+   they come out full-width inside Chinese text. */
+@font-face {
+    font-family: "CJK";
+    font-weight: 300 400;
+    src:
+        local("PingFangSC-Regular"), local("PingFang SC Regular"), local("HiraginoSansGB-W3"), local("Microsoft YaHei"),
+        local("MicrosoftYaHei"), local("NotoSansCJKsc-Regular"), local("Noto Sans CJK SC"),
+        local("SourceHanSansSC-Regular"), local("Source Han Sans SC"), local("NotoSansSC-Regular"),
+        local("Noto Sans SC");
+    unicode-range: U+2018-2019, U+201C-201D, U+2026, U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+}
+@font-face {
+    font-family: "CJK";
+    font-weight: 500 700;
+    src:
+        local("PingFangSC-Medium"), local("PingFang SC Medium"), local("HiraginoSansGB-W6"),
+        local("Microsoft YaHei Bold"), local("MicrosoftYaHei-Bold"), local("NotoSansCJKsc-Medium"),
+        local("Noto Sans CJK SC Medium"), local("SourceHanSansSC-Medium"), local("Source Han Sans SC Medium"),
+        local("NotoSansSC-Medium"), local("Noto Sans SC Medium");
+    unicode-range: U+2018-2019, U+201C-201D, U+2026, U+3000-303F, U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF, U+FF00-FFEF;
+}
+
 @view-transition {
     navigation: auto;
 }
@@ -20,7 +45,8 @@
     /* Light mode is single-ink; dark mode softens body text against the ink. */
     --text: var(--fg);
 
-    --font: "DM Mono", ui-monospace, "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", monospace;
+    --font-cjk-fallback: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    --font: "DM Mono", "CJK", var(--font-cjk-fallback);
     --font-title: "Uni 05_53", var(--font);
 
     --content: 38.75rem;
@@ -48,6 +74,18 @@ html.dark {
     --fg: #c9a8ff;
     --tint: #221f33;
     --text: #ede8ff;
+}
+
+html:lang(zh) {
+    --font: "CJK", "DM Mono", var(--font-cjk-fallback);
+}
+html:lang(zh) body {
+    font-size: 1rem;
+    line-height: 1.85;
+    text-autospace: normal;
+}
+html:lang(zh) :is(h1, h2, h3, h4, h5, h6) {
+    letter-spacing: 0.02em;
 }
 
 *,
@@ -431,6 +469,23 @@ main {
 .article-body th {
     font-weight: 500;
     background: var(--tint);
+}
+.article-body details {
+    padding: 0.6rem 1rem;
+    border: 2px solid var(--fg);
+}
+.article-body summary {
+    font-weight: 500;
+    cursor: pointer;
+}
+.article-body summary:hover {
+    background: var(--tint);
+}
+.article-body details[open] > summary {
+    margin-bottom: 0.75rem;
+}
+.article-body details > :not(summary) + * {
+    margin-top: 1em;
 }
 .article-body :is(del, s) {
     text-decoration-thickness: 1px;
