@@ -12,7 +12,8 @@ const dicts: Record<string, Record<string, string>> = { en, "zh-cn": zh_cn };
 export function useTranslate(locale: string) {
     const dict = dicts[locale] || dicts["en"];
     return (key: string, params?: Record<string, string | number>): string => {
-        let template = dict[key] || dicts["en"][key] || key;
+        const pluralKey = params?.count === 1 ? `${key}_one` : key;
+        let template = dict[pluralKey] || dict[key] || dicts["en"][pluralKey] || dicts["en"][key] || key;
         if (params) {
             for (const [k, v] of Object.entries(params)) {
                 template = template.replaceAll(`\${${k}}`, String(v));

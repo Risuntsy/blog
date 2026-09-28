@@ -16,22 +16,8 @@ const feeds = [
 ---
 
 <feed-picker data-copied={t("copied")} data-copy-failed={t("copy_failed")}>
-    <button
-        class="nav-icon"
-        type="button"
-        data-open-feed
-        aria-expanded="false"
-        aria-haspopup="dialog"
-        aria-label={t("nav_feed")}
-        title={t("nav_feed")}
-    >
-        <svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges">
-            <path class="rss-dot" d="M2 11h3v3H2z"></path>
-            <path class="rss-wave rss-wave-1" d="M2 7h2v1h1v1h1v1h1v1h1v2H7v-1H6v-1H5v-1H4V9H2z"></path>
-            <path
-                class="rss-wave rss-wave-2"
-                d="M2 2h2v1h2v1h2v1h1v1h1v1h1v1h1v1h1v2h-2v-1h-1V9h-1V8H9V7H8V6H6V5H4V4H2z"></path>
-        </svg>
+    <button class="nav-link" type="button" data-open-feed aria-expanded="false" aria-haspopup="dialog">
+        {t("nav_feed")}
     </button>
 
     <dialog class="tool-dialog feed-dialog" aria-labelledby={titleId}>
@@ -54,34 +40,8 @@ const feeds = [
                             <span>{label}</span>
                             <small>{href.pathname}</small>
                         </a>
-                        <button
-                            class="feed-copy"
-                            type="button"
-                            data-feed-url={href.href}
-                            aria-label={t("copy_link")}
-                            title={t("copy_link")}
-                        >
-                            <svg viewBox="0 0 12 12" aria-hidden="true" shape-rendering="crispEdges">
-                                <rect
-                                    x="3"
-                                    y="0"
-                                    width="9"
-                                    height="9"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1"
-                                />
-                                <rect
-                                    class="sheet"
-                                    x="0"
-                                    y="3"
-                                    width="9"
-                                    height="9"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1"
-                                />
-                            </svg>
+                        <button class="feed-copy" type="button" data-feed-url={href.href}>
+                            {t("copy_link")}
                         </button>
                     </div>
                 ))

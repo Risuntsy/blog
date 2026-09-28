@@ -21,7 +21,7 @@ const pages = Array.from({ length: lastPage }, (_, i) => i + 1);
 
 {
     lastPage > 1 && (
-        <nav class="pager" aria-label="pagination">
+        <nav class="pager" aria-label={t("pagination")}>
             {currentPage > 1 && <a href={href(currentPage - 1)}>{t("prev_page")}</a>}
             {pages.map(n =>
                 n === currentPage ? (

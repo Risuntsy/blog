@@ -8,23 +8,15 @@ interface Props {
 
 const { lang, tags } = Astro.props;
 const t = useTranslate(lang);
-const max = Math.max(1, ...tags.map(x => x.count));
 ---
 
-<div class="tags" style="gap: 0.65rem">
+<p class="tags tag-cloud">
     {
-        tags.map(({ name, count }) => {
-            const scale = 0.85 + (count / max) * 0.45;
-            return (
-                <a
-                    class="tag"
-                    href={tagHref(lang, name)}
-                    style={`font-size: ${scale}rem`}
-                    title={t("tag_count", { count })}
-                >
-                    #{name}
-                </a>
-            );
-        })
+        tags.map(({ name, count }) => (
+            <a class="tag" href={tagHref(lang, name)} title={t("tag_count", { count })}>
+                #{name}
+                <sup>{count}</sup>
+            </a>
+        ))
     }
-</div>
+</p>

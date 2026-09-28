@@ -2,7 +2,9 @@
 import { useTranslate } from "#/i18n";
 import Header from "#/components/Header.astro";
 import Footer from "#/components/Footer.astro";
-import fusionPixelFontUrl from "#/assets/fonts/fusion-pixel/fusion-pixel-12px-monospaced-zh_hans.otf.woff2?url";
+import "@fontsource/dm-mono/latin-300.css";
+import "@fontsource/dm-mono/latin-300-italic.css";
+import "@fontsource/dm-mono/latin-500.css";
 import "#/styles/global.css";
 
 interface Props {
@@ -24,7 +26,6 @@ const desc = description || t("site_description");
     <head>
         <meta charset="UTF-8" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="preload" href={fusionPixelFontUrl} as="font" type="font/woff2" crossorigin="anonymous" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content={desc} />
         <link rel="alternate" type="application/rss+xml" title={t("site_title")} href={`/${lang}/rss.xml`} />
@@ -72,22 +73,36 @@ const desc = description || t("site_description");
                     this.removeEventListener("keydown", this.onActivate);
                 }
 
+                private timers = new WeakMap<HTMLElement, number>();
+
                 private async copy(trigger: HTMLElement) {
-                    const text = trigger.closest(".code-window")?.querySelector("pre")?.textContent ?? "";
-                    const label = trigger.getAttribute("aria-label") ?? "Copy";
+                    const text =
+                        trigger.dataset.copy === "inline"
+                            ? (trigger.textContent ?? "")
+                            : (trigger.closest(".code-window")?.querySelector("pre")?.textContent ?? "");
 
                     try {
                         await navigator.clipboard.writeText(text);
-                        trigger.dataset.state = "copied";
-                        trigger.setAttribute("aria-label", "Copied");
                     } catch {
-                        trigger.setAttribute("aria-label", "Copy failed");
+                        return;
                     }
 
-                    window.setTimeout(() => {
-                        delete trigger.dataset.state;
-                        trigger.setAttribute("aria-label", label);
-                    }, 1200);
+                    window.clearTimeout(this.timers.get(trigger));
+                    const isButton = trigger.dataset.copy === "block";
+                    const label = trigger.dataset.label ?? trigger.textContent ?? "";
+                    if (isButton) {
+                        trigger.dataset.label = label;
+                        trigger.textContent = trigger.dataset.copied ?? label;
+                    }
+                    trigger.dataset.state = "copied";
+
+                    this.timers.set(
+                        trigger,
+                        window.setTimeout(() => {
+                            delete trigger.dataset.state;
+                            if (isButton) trigger.textContent = label;
+                        }, 1200),
+                    );
                 }
             }
 

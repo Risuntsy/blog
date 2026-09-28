@@ -3,7 +3,6 @@ import { defineConfig } from "astro/config";
 import { unified } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
-import tailwindcss from "@tailwindcss/vite";
 import { TAG_TRANSLATIONS } from "./src/i18n/tags.ts";
 
 const siteUrl = new URL("https://blog.risun.icu");
@@ -78,6 +77,98 @@ function removeDuplicateTitle() {
     };
 }
 
+/** Shiki drops the fence meta, so keep `title="file.ext"` on the <pre>. */
+const codeTitleTransformer = {
+    name: "code-title",
+    /** @param {any} node */
+    pre(node) {
+        // @ts-ignore - `this` is the Shiki transformer context
+        const title = String(this.options.meta?.__raw ?? "").match(/title=(["'])(.*?)\1/)?.[2];
+        if (title) node.properties["data-title"] = title;
+    },
+};
+
+const COPY_LABELS = {
+    en: { copy: "Copy", copied: "Copied" },
+    "zh-cn": { copy: "复制", copied: "已复制" },
+};
+
+/** Wrap highlighted blocks in a titled code window and make inline code copyable. */
+function codeBlocks() {
+    return (/** @type {any} */ tree, /** @type {any} */ file) => {
+        const lang = /[\\/]zh-cn[\\/]/.test(String(file.path ?? "")) ? "zh-cn" : "en";
+        const labels = COPY_LABELS[lang];
+
+        /** @param {any} node */
+        function visit(node) {
+            if (!Array.isArray(node?.children)) return;
+            node.children = node.children.map((/** @type {any} */ child) => {
+                if (child?.type !== "element") return child;
+
+                if (child.tagName === "pre") {
+                    const language = String(child.properties?.dataLanguage ?? "");
+                    const title = String(child.properties?.["data-title"] ?? "");
+                    delete child.properties["data-title"];
+                    const text = (/** @type {string} */ value) => ({ type: "text", value });
+                    return {
+                        type: "element",
+                        tagName: "figure",
+                        properties: { className: ["code-window"] },
+                        children: [
+                            {
+                                type: "element",
+                                tagName: "figcaption",
+                                properties: { className: ["code-titlebar"] },
+                                children: [
+                                    {
+                                        type: "element",
+                                        tagName: "span",
+                                        properties: { className: ["file"] },
+                                        children: title ? [text(title)] : [],
+                                    },
+                                    {
+                                        type: "element",
+                                        tagName: "span",
+                                        properties: { className: ["lang"] },
+                                        children: language && language !== "plaintext" ? [text(language)] : [],
+                                    },
+                                    {
+                                        type: "element",
+                                        tagName: "button",
+                                        properties: {
+                                            type: "button",
+                                            className: ["code-copy"],
+                                            dataCopy: "block",
+                                            dataCopied: labels.copied,
+                                        },
+                                        children: [text(labels.copy)],
+                                    },
+                                ],
+                            },
+                            child,
+                        ],
+                    };
+                }
+
+                if (child.tagName === "code") {
+                    child.properties = {
+                        ...child.properties,
+                        dataCopy: "inline",
+                        tabIndex: 0,
+                        title: labels.copy,
+                    };
+                    return child;
+                }
+
+                visit(child);
+                return child;
+            });
+        }
+
+        visit(tree);
+    };
+}
+
 /** @param {string} page */
 function isTranslatedTagAlias(page) {
     const { pathname } = new URL(page);
@@ -101,11 +192,14 @@ export default defineConfig({
     integrations: [mdx(), sitemap({ filter: page => !isTranslatedTagAlias(page) })],
     markdown: {
         processor: unified({
-            rehypePlugins: [removeDuplicateTitle, externalLinks],
+            rehypePlugins: [removeDuplicateTitle, externalLinks, codeBlocks],
         }),
+        shikiConfig: {
+            theme: "css-variables",
+            transformers: [codeTitleTransformer],
+        },
     },
     vite: {
-        plugins: [tailwindcss()],
         resolve: {
             alias: {
                 "#": "/src",

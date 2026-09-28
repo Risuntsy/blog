@@ -18,19 +18,8 @@ const titleId = `search-title-${lang}`;
     data-result-count={strings.result_count}
     data-untitled={strings.untitled}
 >
-    <button
-        class="nav-icon"
-        type="button"
-        data-open-search
-        aria-expanded="false"
-        aria-haspopup="dialog"
-        aria-label={strings.btn}
-        title={strings.btn}
-    >
-        <svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges">
-            <path class="search-lens" d="M1 1h8v1h1v8H9v1H1V9H0V1h1zm1 1v7h7V2H2z"></path>
-            <path class="search-handle" d="M10 10h2v1h1v1h1v1h1v2h-2v-1h-1v-1h-1v-1h-1z"></path>
-        </svg>
+    <button class="nav-link" type="button" data-open-search aria-expanded="false" aria-haspopup="dialog">
+        {strings.btn}
     </button>
 
     <dialog class="tool-dialog search-dialog" aria-labelledby={titleId}>

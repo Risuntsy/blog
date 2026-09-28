@@ -39,23 +39,23 @@ const updatedStr = post.data.updated_at ? fmtDate(lang, post.data.updated_at) : 
 >
     <article class="article" data-pagefind-body>
         <p class="meta">
-            <span>{t("posted_at", { date: dateStr })}</span>
+            <time datetime={post.data.created_at.toISOString().slice(0, 10)}>{dateStr}</time>
             {updatedStr && updatedStr !== dateStr && <span>{t("updated_at", { date: updatedStr })}</span>}
         </p>
         <h1 data-pagefind-meta="title">{post.data.title}</h1>
+        <div class="article-body">
+            <Content />
+        </div>
         {
             post.data.tags.length > 0 && (
-                <div class="tags">
+                <p class="tags article-tags">
                     {post.data.tags.map(tag => (
                         <a class="tag" href={tagHref(lang, tag)}>
                             #{tag}
                         </a>
                     ))}
-                </div>
+                </p>
             )
         }
-        <div class="article-body">
-            <Content />
-        </div>
     </article>
 </BaseLayout>

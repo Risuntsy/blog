@@ -21,12 +21,10 @@ RUN --mount=type=secret,id=content_repo,required=false \
 FROM docker.io/library/nginx:1.29-alpine AS runtime
 
 LABEL org.opencontainers.image.title="Risun's Blog" \
-  org.opencontainers.image.source="https://github.com/Risuntsy/blog" \
-  org.opencontainers.image.licenses="OFL-1.1"
+  org.opencontainers.image.source="https://github.com/Risuntsy/blog"
 
 COPY deploy/nginx.conf /etc/nginx/nginx.conf
 COPY --from=build --chown=nginx:nginx /app/dist/ /usr/share/nginx/html/
-COPY --from=build /app/third_party/fusion-pixel-font/ /usr/share/licenses/fusion-pixel-font/
 
 USER nginx
 

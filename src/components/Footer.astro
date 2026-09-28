@@ -12,15 +12,12 @@ const [themeBefore, themeAfter] = t("footer_theme").split("${pixl}");
 ---
 
 <footer class="footer">
-    <div class="container">
-        {t("site_title")}
-        ·
-        <a href="https://github.com/Risuntsy/blog" target="_blank" rel="noopener">{t("footer_source")}</a>
-        ·
-        {poweredBefore}<a href="https://astro.build/" target="_blank" rel="noopener">Astro</a>{poweredAfter}
-        ·
-        {themeBefore}<a href="https://github.com/Automattic/themes/tree/trunk/pixl" target="_blank" rel="noopener"
+    <span>{t("site_title")}</span>
+    <span><a href="https://github.com/Risuntsy/blog" target="_blank" rel="noopener">{t("footer_source")}</a></span>
+    <span>{poweredBefore}<a href="https://astro.build/" target="_blank" rel="noopener">Astro</a>{poweredAfter}</span>
+    <span
+        >{themeBefore}<a href="https://github.com/Automattic/themes/tree/trunk/pixl" target="_blank" rel="noopener"
             >Pixl</a
-        >{themeAfter}
-    </div>
+        >{themeAfter}</span
+    >
 </footer>
